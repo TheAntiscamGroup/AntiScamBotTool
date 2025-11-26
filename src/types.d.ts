@@ -1799,6 +1799,7 @@ interface RequestInit<Cf = CfProperties> {
 }
 type Service<T extends (new (...args: any[]) => Rpc.WorkerEntrypointBranded) | Rpc.WorkerEntrypointBranded | ExportedHandler<any, any, any> | undefined = undefined> = T extends new (...args: any[]) => Rpc.WorkerEntrypointBranded ? Fetcher<InstanceType<T>> : T extends Rpc.WorkerEntrypointBranded ? Fetcher<T> : T extends Exclude<Rpc.EntrypointBranded, Rpc.WorkerEntrypointBranded> ? never : Fetcher<undefined>;
 type Fetcher<T extends Rpc.EntrypointBranded | undefined = undefined, Reserved extends string = never> = (T extends Rpc.EntrypointBranded ? Rpc.Provider<T, Reserved | "fetch" | "connect"> : unknown) & {
+    [x: string]: any;
     fetch(input: RequestInfo | URL, init?: RequestInit): Promise<Response>;
     connect(address: SocketAddress | string, options?: SocketOptions): Socket;
 };

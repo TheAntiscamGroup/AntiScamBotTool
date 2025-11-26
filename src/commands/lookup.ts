@@ -23,9 +23,10 @@ export default class LookupCommand extends SlashCommand {
     });
   }
 
-  async run(ctx: CommandContext) {
-    const lookupUser = ctx.options["account"];
+  async run(ctx: CommandContext<Cloudflare.Env>) {
+    const lookupUser:string = ctx.options["account"];
 
+    // prevent the user from looking up themselves (which would be silly)
     if (lookupUser == ctx.user.id) {
       await ctx.send("You cannot send this command on yourself.");
       return;
@@ -34,7 +35,7 @@ export default class LookupCommand extends SlashCommand {
     // we have to defer because we'll need to make some RPC out calls
     await ctx.defer(true);
 
-    // Determine what the status is of the user being banned
+    // Determine what the status is of the other user, if banned or not
     let banStatus = false;
     const apiResponse = await ctx.serverContext.API_SERVICE.checkAccount(lookupUser);
     if (apiResponse.valid) {
@@ -72,6 +73,7 @@ export default class LookupCommand extends SlashCommand {
         }
       ]
     };
+    // Send the response to the user
     await ctx.sendFollowUp(MessageResponse);
   }
 };
