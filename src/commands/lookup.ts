@@ -16,7 +16,8 @@ export default class LookupCommand extends SlashCommand {
         {
           type: CommandOptionType.MENTIONABLE,
           name: "account",
-          description: "the account to check"
+          description: "the account to check",
+          required: true
         }
       ]
     });
