@@ -1,0 +1,18 @@
+name = "antiscambothelper"
+main = "src/index.ts"
+compatibility_flags = [ "nodejs_compat" ]
+compatibility_date = "2025-11-25"
+send_metrics = false
+preview_urls = false
+
+services = [
+  { binding = "API_SERVICE", service = "scamguardapi", entrypoint = "APILookup" },
+]
+
+[observability]
+[observability.logs]
+enabled = true
+head_sampling_rate = 1
+
+[vars]
+LOG_COMMAND_RUN="true"
