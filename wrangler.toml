@@ -4,7 +4,7 @@ compatibility_flags = [ "nodejs_compat" ]
 compatibility_date = "2025-11-25"
 send_metrics = false
 preview_urls = true
-workers_dev = false
+workers_dev = true
 
 services = [
   { binding = "API_SERVICE", service = "scamguardapi", entrypoint = "APILookup" },
@@ -12,6 +12,7 @@ services = [
 
 routes = [
   { pattern = "tool.scamguard.app/*", zone_name = "scamguard.app" },
+  { pattern = "tool.scamguard.app", zone_name = "scamguard.app" },
 ]
 
 [observability]
