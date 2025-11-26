@@ -11,7 +11,7 @@ export default class LookupCommand extends SlashCommand {
         usages: 10,
       },
       name: "lookup",
-      description: "looks up the given account to see if it's currently banned.",
+      description: "looks up the given account with ScamGuard",
       options: [
         {
           type: CommandOptionType.MENTIONABLE,
