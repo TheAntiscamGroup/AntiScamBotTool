@@ -1,7 +1,8 @@
 {
   "main": "src/index.ts",
   "scripts": {
-    "sync": "slash-up sync"
+    "sync": "slash-up sync",
+    "types": "wrangler types src/types.d.ts"
   },
   "devDependencies": {
     "@types/node": "^24.10.1",

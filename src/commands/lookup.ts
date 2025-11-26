@@ -1,4 +1,5 @@
 import { SlashCommand, SlashCreator, CommandContext, CommandOptionType, ApplicationIntegrationType, InteractionContextType, MessageOptions } from "slash-create/web"
+import HelperUtils from "../utils";
 
 export default class LookupCommand extends SlashCommand {
   constructor(creator: SlashCreator) {
@@ -25,9 +26,18 @@ export default class LookupCommand extends SlashCommand {
 
   async run(ctx: CommandContext<Cloudflare.Env>) {
     const lookupUser:string = ctx.options["account"];
+    const curUser:string = ctx.user.id;
+    const env:Env = ctx.serverContext;
+
+    // check if the given input is a correct number
+    if (!HelperUtils.IsAccountValid(lookupUser)) {
+      console.error(`${curUser} sent an input of ${lookupUser} which is invalid`);
+      await ctx.send("The given input is not a valid account");
+      return;
+    }
 
     // prevent the user from looking up themselves (which would be silly)
-    if (lookupUser == ctx.user.id) {
+    if (lookupUser == curUser) {
       await ctx.send("You cannot send this command on yourself.");
       return;
     }
@@ -35,9 +45,16 @@ export default class LookupCommand extends SlashCommand {
     // we have to defer because we'll need to make some RPC out calls
     await ctx.defer(true);
 
+    // Check if we are blocked from running this command
+    const isForbidden = await HelperUtils.IsAccountForbidden(curUser, env);
+    if (isForbidden) {
+      await ctx.sendFollowUp(HelperUtils.GetSupportLink());
+      return;
+    }
+
     // Determine what the status is of the other user, if banned or not
     let banStatus = false;
-    const apiResponse = await ctx.serverContext.API_SERVICE.checkAccount(lookupUser);
+    const apiResponse = await env.API_SERVICE.checkAccount(lookupUser);
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
     } else {

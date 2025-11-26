@@ -14,6 +14,10 @@ routes = [
   { pattern = "tool.scamguard.app", custom_domain = true },
 ]
 
+[[kv_namespaces]]
+binding = "FORBID_LIST"
+id = "fef7637f60014232bcab3794aa530db3"
+
 [observability]
 [observability.logs]
 enabled = true
