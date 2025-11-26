@@ -32,13 +32,13 @@ export default class LookupCommand extends SlashCommand {
     // check if the given input is a correct number
     if (!HelperUtils.IsAccountValid(lookupUser)) {
       console.error(`${curUser} sent an input of ${lookupUser} which is invalid`);
-      await ctx.send("The given input is not a valid account");
+      await ctx.send("The given input is not a valid Discord account");
       return;
     }
 
     // prevent the user from looking up themselves (which would be silly)
     if (lookupUser == curUser) {
-      await ctx.send("You cannot send this command on yourself.");
+      await ctx.send("You cannot use this command on yourself.");
       return;
     }
 
@@ -58,7 +58,7 @@ export default class LookupCommand extends SlashCommand {
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
     } else {
-      await ctx.sendFollowUp("ScamGuard encountered an error while trying to determine the user status");
+      await ctx.sendFollowUp("ScamGuard encountered an error while trying to determine user status");
       return;
     }
 
