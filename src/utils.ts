@@ -13,6 +13,12 @@ export default class HelperUtils {
       return true;
     return false;
   }
+  public static async CanAccountReport(account: string, env: Env): Promise<boolean> {
+    const kvLookup = await env.CAN_REPORT.get(account);
+    if (kvLookup)
+      return true;
+    return false;
+  }
   public static GetSupportLink(): string {
     return "You are currently forbidden from using this tool. " +
     "Please [Open a Support ticket](https://discord.com/channels/1155997672667365406/1281338895430320218) " +
