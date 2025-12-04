@@ -1,4 +1,4 @@
-name = "antiscambothelper"
+name = "antiscambottool"
 main = "src/index.ts"
 compatibility_flags = [ "nodejs_compat" ]
 compatibility_date = "2025-11-25"
