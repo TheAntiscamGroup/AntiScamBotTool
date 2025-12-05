@@ -43,6 +43,13 @@ export default class ForbidAccessHelper extends SlashCommand {
     }
 
     await ctx.defer();
+
+    // Check to see if they're already on the forbidden list
+    if (await HelperUtils.IsAccountForbidden(targetUser, env)) {
+      await ctx.sendFollowUp(`\`${targetUser}\` is already on the forbidden list`);
+      return;
+    }
+
     try {
       await env.FORBID_LIST.put(targetUser, "true");
       await ctx.sendFollowUp({
