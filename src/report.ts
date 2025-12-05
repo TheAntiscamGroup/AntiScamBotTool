@@ -1,7 +1,7 @@
 import { CommandContext } from "slash-create/web";
 import HelperUtils from "./utils";
 
-type ReportObject = {
+export type ReportObject = {
   reportedID: string;
   reportedUserName: string;
   reporterName?: string;
@@ -10,6 +10,7 @@ type ReportObject = {
   messageEvidence?: string;
   posterName?: string;
   evidence?: string[];
+  source: string;
 };
 
 type ReportResponse = {
@@ -18,34 +19,46 @@ type ReportResponse = {
   success: boolean
 };
 
-export default class ScamGuardReport {
-  public static async run(ctx: CommandContext<Cloudflare.Env>) {
+export class ScamGuardReport {
+  public static async run(ctx: CommandContext<Cloudflare.Env>, overrideReport:ReportObject|null=null) {
     const env:Env = ctx.serverContext;
 
-    const curUser:string = ctx.user.id;
-    let report:ReportObject = {
-      reporterID: curUser,
+    let report:ReportObject = overrideReport != null ? overrideReport : {
       reportedID: "",
       reportedUserName: "",
-      reporterName: ctx.user.username,
-      posterName: "ScamGuard User Tool",
+      source: "User Tool"
     };
 
-    if (!HelperUtils.CanAccountReport(curUser, env)) {
-      ctx.send({
+    const curUser:string = ctx.user.id;
+    // override any passed in values
+    report.reporterID = curUser;
+    report.reporterName = ctx.user.username;
+    report.posterName = "ScamGuard User Tool";
+    report.source = "User Tool";
+
+    await ctx.defer(true);
+    const canReport = await HelperUtils.CanAccountReport(curUser, env);
+    if (!canReport) {
+      ctx.sendFollowUp({
         content: "You are not allowed to use this command",
         ephemeral: true
       });
       return;
     }
-
-    await ctx.defer(true);
     
     if (ctx.targetMessage !== null && ctx.targetMessage !== undefined) {
-      report.reportedID = ctx.targetMessage.author.id;
-      report.reportedUserName = ctx.targetMessage.author.username;
-      report.messageEvidence = ctx.targetMessage.content;
-      // TODO: Grab files/embeds if forwarded?
+      const msg = ctx.targetMessage;
+      report.reportedID = msg.author.id;
+      report.reportedUserName = msg.author.username;
+      report.messageEvidence = msg.content;
+      // grab any attachments we might have as well
+      if (msg.attachments.length > 0) {
+        report.evidence = [];
+        msg.attachments.forEach(el => {
+          console.log(`Found file: ${el.url} and proxy ${el.proxy_url}`);
+          report.evidence?.push(el.url);
+        });
+      }
     }
 
     const response:ReportResponse = await env.REPORT.post(report, true);
