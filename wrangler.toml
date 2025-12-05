@@ -17,7 +17,8 @@ routes = [
 
 kv_namespaces = [
   { binding="FORBID_LIST", id="fef7637f60014232bcab3794aa530db3"},
-  { binding="CAN_REPORT", id="65a8b172d3014e11960367d0f4c8d480"}
+  { binding="CAN_REPORT", id="65a8b172d3014e11960367d0f4c8d480"},
+  { binding="REPORT_THREAD_CHAIN", id="ccb03dbeefb34d82b56bbe44ad11a4a8" },
 ]
 
 [observability]
@@ -27,3 +28,4 @@ head_sampling_rate = 1
 
 [vars]
 LOG_COMMAND_RUN="true"
+CHAIN_TTL=5
