@@ -4,7 +4,6 @@ import ScamGuardLookup from "../lookup";
 export default class LookupCommand extends SlashCommand {
   constructor(creator: SlashCreator) {
     super(creator, {
-      dmPermission: true,
       contexts: [InteractionContextType.PRIVATE_CHANNEL],
       integrationTypes: [ApplicationIntegrationType.USER_INSTALL],
       throttling: {

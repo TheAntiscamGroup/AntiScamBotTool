@@ -5,7 +5,6 @@ import HelperUtils from "../utils";
 export default class MessageReport extends SlashCommand {
   constructor(creator: SlashCreator) {
     super(creator, {
-      dmPermission: true,
       contexts: [InteractionContextType.PRIVATE_CHANNEL],
       integrationTypes: [ApplicationIntegrationType.USER_INSTALL],
       type: ApplicationCommandType.MESSAGE,

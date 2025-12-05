@@ -27,5 +27,14 @@ enabled = true
 head_sampling_rate = 1
 
 [vars]
+# some logging settings
 LOG_COMMAND_RUN="true"
+LOG_ERRORS="true"
+# time in minutes for how long we should chain forwarded messages
 CHAIN_TTL=5
+# The control guild, for adding people to the reporter.
+CONTROL_GUILD="1155997672667365406"
+# control/moderation flag overrides
+USES_BLOCKLIST="true"
+# if everyone is allowed to report rather than checking KV entries
+ALL_CAN_REPORT="false"

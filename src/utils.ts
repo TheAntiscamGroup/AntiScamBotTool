@@ -8,6 +8,11 @@ export default class HelperUtils {
     return /^\d+$/.test(account);
   };
   public static async IsAccountForbidden(account: string, env: Env): Promise<boolean> {
+    // Can people be blocked from using this tool? 
+    // This function checks access.
+    if (env.USES_BLOCKLIST === "false")
+      return false;
+
     try {
       const kvLookup = await env.FORBID_LIST.get(account);
       if (kvLookup == null)
@@ -18,6 +23,9 @@ export default class HelperUtils {
     return true;
   }
   public static async CanAccountReport(account: string, env: Env): Promise<boolean> {
+    if (env.ALL_CAN_REPORT === "true")
+      return true;
+
     try {
       const kvLookup = await env.CAN_REPORT.get(account);
       if (kvLookup != null)

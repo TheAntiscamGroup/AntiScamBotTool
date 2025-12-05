@@ -1,5 +1,7 @@
 import { commands } from './commands';
 import { SlashCreator, CloudflareWorkerServer } from 'slash-create/web';
+import AddPermissionsHelper from './commands/add-permissions';
+import ForbidAccessHelper from './commands/add-forbid';
 
 const cfServer = new CloudflareWorkerServer();
 let creator: SlashCreator;
@@ -10,12 +12,19 @@ function makeCreator(env: Record<string, any>) {
     publicKey: env.DISCORD_PUBLIC_KEY,
     token: env.DISCORD_BOT_TOKEN
   });
-  creator.withServer(cfServer).registerCommands(commands);
+  // base commands that can be used globally
+  creator.withServer(cfServer).registerCommands(commands, false);
+  // explicit guild only commands
+  const controlGuild:string = env.CONTROL_GUILD;
+  creator.registerCommand(new AddPermissionsHelper(creator, controlGuild));
+  creator.registerCommand(new ForbidAccessHelper(creator, controlGuild));
 
-  creator.on('error', (error) => console.error(error.stack || error.toString()));
-  creator.on('commandError', (command, error) =>
-    console.error(`Command ${command.commandName} errored:`, error.stack || error.toString())
-  );
+  if (env.LOG_ERRORS !== "false") {
+    creator.on('error', (error) => console.error(error.stack || error.toString()));
+    creator.on('commandError', (command, error) =>
+      console.error(`Command ${command.commandName} errored:`, error.stack || error.toString())
+    );
+  }
 
   if (env.LOG_COMMAND_RUN !== "false") {
     creator.on('commandRun', (command, _, ctx) =>
@@ -27,7 +36,8 @@ function makeCreator(env: Record<string, any>) {
 
 export default {
   async fetch(request: any, env: Record<string, any>, ctx: any) {
-    if (!creator) makeCreator(env);
+    if (!creator) 
+      makeCreator(env);
     return cfServer.fetch(request, env, ctx);
   }
 };
