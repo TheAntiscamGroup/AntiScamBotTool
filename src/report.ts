@@ -70,7 +70,17 @@ export class ScamGuardReport {
     const channelSourceID = ctx.channel.id;
     const prevThreadID = await env.REPORT_THREAD_CHAIN.get(channelSourceID);
     const firstReport = prevThreadID == null || prevThreadID == undefined;
-    const response:ReportResponse = (firstReport) ? await env.REPORT.post(report, true) : await env.REPORT.postFollowup(report, prevThreadID);
+    let response:ReportResponse;
+    try {
+      response = (firstReport) ? await env.REPORT.post(report, true) : await env.REPORT.postFollowup(report, prevThreadID);
+    } catch(err) {
+      console.error(`Encountered error on report ${report.reportedID}, was first ${firstReport}`);
+      await ctx.sendFollowUp({
+        content: "Unable to process this action, an error occurred",
+        ephemeral: true
+      })
+      return;
+    }
     const success:boolean = response.success;
 
     // Create the basis for the message to be sent over Discord.
@@ -80,9 +90,13 @@ export class ScamGuardReport {
 
     // add to KV, make it die in about 5 minutes, this count refreshes per submission via the message app tool
     if (hadMessage && success) {
-      await env.REPORT_THREAD_CHAIN.put(channelSourceID, response.threadID, {
-        expirationTtl: chainTTL * 60
-      });
+      try {
+        await env.REPORT_THREAD_CHAIN.put(channelSourceID, response.threadID, {
+          expirationTtl: chainTTL * 60
+        });
+      } catch(err) {
+        console.error(`Encountered an error trying to update thread KV ${err}`);
+      }
     }
     // If this is a first time report, then we show this embed.
     if (firstReport) {
