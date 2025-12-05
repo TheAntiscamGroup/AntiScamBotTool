@@ -52,6 +52,14 @@ export class ScamGuardReport {
     
     if (hadMessage) {
       const msg = ctx.targetMessage;
+      // have a little safety from potential mistakes
+      if (msg.author.id == curUser) {
+        ctx.sendFollowUp({
+          content: "You cannot report on yourself",
+          ephemeral: true
+        });
+        return;
+      }
       report.reportedID = msg.author.id;
       report.reportedUserName = msg.author.username;
       report.messageEvidence = `${report.reportedUserName}: ${msg.content}`;
