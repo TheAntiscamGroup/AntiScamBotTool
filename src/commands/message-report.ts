@@ -1,4 +1,6 @@
 import { ApplicationCommandType, ApplicationIntegrationType, CommandContext, InteractionContextType, MessageOptions, SlashCommand, SlashCreator } from "slash-create/web";
+import ScamGuardReport from "../report";
+import HelperUtils from "../utils";
 
 export default class MessageReport extends SlashCommand {
   constructor(creator: SlashCreator) {
@@ -13,13 +15,17 @@ export default class MessageReport extends SlashCommand {
   }
   async run(ctx: CommandContext<Cloudflare.Env>) {
     const msg = ctx.targetMessage;
+    const env:Env = ctx.serverContext;
     if (msg === undefined || msg === null)
       return;
 
-    const response: MessageOptions = {
-      content: `Sender: ${msg.author.id} - Message: ${msg.content}`,
-      ephemeral: true
-    };
-    ctx.send(response);
+    if (await HelperUtils.IsAccountForbidden(ctx.user.id, env)) {
+      await ctx.send({
+        content: HelperUtils.GetSupportLink(),
+        ephemeral: true
+      });
+      return;
+    }
+    await ScamGuardReport.run(ctx);
   }
 };

@@ -8,6 +8,7 @@ workers_dev = false
 
 services = [
   { binding = "API_SERVICE", service = "scamguardapi", entrypoint = "APILookup" },
+  { binding = "REPORT", service="antiscamreport", entrypoint="ScamReport"},
 ]
 
 routes = [
