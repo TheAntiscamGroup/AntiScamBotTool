@@ -8,15 +8,23 @@ export default class HelperUtils {
     return /^\d+$/.test(account);
   };
   public static async IsAccountForbidden(account: string, env: Env): Promise<boolean> {
-    const kvLookup = await env.FORBID_LIST.get(account);
-    if (kvLookup)
-      return true;
-    return false;
+    try {
+      const kvLookup = await env.FORBID_LIST.get(account);
+      if (kvLookup == null)
+        return false;
+    } catch(err) {
+      console.error(`Failed to lookup ${account} in IsAccountForbidden with err ${err}`);
+    }
+    return true;
   }
   public static async CanAccountReport(account: string, env: Env): Promise<boolean> {
-    const kvLookup = await env.CAN_REPORT.get(account);
-    if (kvLookup)
-      return true;
+    try {
+      const kvLookup = await env.CAN_REPORT.get(account);
+      if (kvLookup != null)
+        return true;
+    } catch(err) {
+      console.error(`Failed to lookup ${account} in CanAccountReport with err ${err}`);
+    }
     return false;
   }
   public static GetSupportLink(): string {
