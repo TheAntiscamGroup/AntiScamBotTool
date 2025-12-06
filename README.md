@@ -2,7 +2,9 @@
 
 An installable Discord interactions tool that allows us to be able to more easily interact with accounts and ScamGuard.
 
-Contains:
+## Features
+
+This Discord interaction contains:
 
 * `/lookup` - for looking up an user via a command in a DM
 * User Application Interaction - for looking up the user while looking at their profile
@@ -12,3 +14,15 @@ Contains:
 The end goal is to make everything work easier for users.  
 
 You can forward messages directly to ScamGuard reporting + look up accounts all within the Discord UI.
+
+## Setup
+
+This requires the following three protected secrets to be added to the worker environment. These can all be gotten from your Discord developer application dashboard.
+
+* `DISCORD_APP_ID` - Public Application ID
+* `DISCORD_PUBLIC_KEY` - Application Public Key
+* `DISCORD_BOT_TOKEN` - Bot Token (gotten from the bot page)
+
+All other configurations can be handled by the `wrangler.toml` file.
+
+Once configured, run `npm run sync` to sync the commands with the Discord platform.
