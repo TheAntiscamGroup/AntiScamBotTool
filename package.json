@@ -1,5 +1,6 @@
 {
   "main": "src/index.ts",
+  "name": "antiscambottool",
   "scripts": {
     "sync": "slash-up sync",
     "types": "wrangler types src/types.d.ts",
@@ -7,8 +8,8 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.1",
-    "slash-create": "^6.7.0",
+    "slash-create": "^6.7.1",
     "slash-up": "^1.4.2",
-    "wrangler": "^4.50.0"
+    "wrangler": "^4.53.0"
   }
 }
