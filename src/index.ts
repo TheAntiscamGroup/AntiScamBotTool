@@ -31,7 +31,6 @@ function makeCreator(env: Record<string, any>) {
       console.info(`${ctx.user.username} (${ctx.user.id}) ran command ${command.commandName}`)
     );
   }
-
 }
 
 export default {

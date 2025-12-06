@@ -1,4 +1,4 @@
-import { SlashCommand, SlashCreator, CommandContext, CommandOptionType, ApplicationIntegrationType, InteractionContextType, MessageOptions } from "slash-create/web"
+import { SlashCommand, SlashCreator, CommandContext, CommandOptionType, ApplicationIntegrationType, InteractionContextType } from "slash-create/web"
 import ScamGuardLookup from "../lookup";
 
 export default class LookupCommand extends SlashCommand {
@@ -24,7 +24,6 @@ export default class LookupCommand extends SlashCommand {
   }
 
   async run(ctx: CommandContext<Cloudflare.Env>) {
-    const lookupUser:string = ctx.options["account"];
-    await ScamGuardLookup.run(ctx, lookupUser);
+    return await ScamGuardLookup.run(ctx, ctx.options["account"]);
   }
 };

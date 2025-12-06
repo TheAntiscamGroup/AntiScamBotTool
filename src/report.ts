@@ -23,6 +23,9 @@ type ReportResponse = {
 export class ScamGuardReport {
   public static async run(ctx: CommandContext<Cloudflare.Env>, overrideReport:ReportObject|null=null) {
     const env:Env = ctx.serverContext;
+    var message:MessageOptions = {
+      ephemeral: true
+    };
 
     let report:ReportObject = overrideReport != null ? overrideReport : {
       reportedID: "",
@@ -40,11 +43,8 @@ export class ScamGuardReport {
     await ctx.defer(true);
     const canReport = await HelperUtils.CanAccountReport(curUser, env);
     if (!canReport) {
-      ctx.sendFollowUp({
-        content: "You are not allowed to use this command",
-        ephemeral: true
-      });
-      return;
+      message.content = "You are not allowed to use this command";
+      return message;
     }
 
     // If this was sent via a right click message report
@@ -54,11 +54,8 @@ export class ScamGuardReport {
       const msg = ctx.targetMessage;
       // have a little safety from potential mistakes
       if (msg.author.id == curUser) {
-        ctx.sendFollowUp({
-          content: "You cannot report on yourself",
-          ephemeral: true
-        });
-        return;
+        message.content = "You cannot report on yourself";
+        return message;
       }
       report.reportedID = msg.author.id;
       report.reportedUserName = msg.author.username;
@@ -72,6 +69,22 @@ export class ScamGuardReport {
         });
       }
     }
+
+    // Check to see if account is already banned.
+    let banStatus = false;
+    const apiResponse = await env.API_SERVICE.checkAccount(report.reportedID);
+    if (apiResponse.valid) {
+      banStatus = apiResponse.banned;
+    } else {
+      message.content = "ScamGuard encountered an error while deferring user id, please try again";
+      return message;
+    }
+
+    if (banStatus === true) {
+      message.content = `The account \`${report.reportedID}\` has already been banned by ScamGuard.`;
+      return message;
+    }
+
     // How long we will listen to incoming reports and redirect them
     const chainTTL:number = Number(env.CHAIN_TTL);
 
@@ -83,18 +96,10 @@ export class ScamGuardReport {
       response = (firstReport) ? await env.REPORT.post(report, true) : await env.REPORT.postFollowup(report, prevThreadID);
     } catch(err) {
       console.error(`Encountered error on report ${report.reportedID}, was first ${firstReport}`);
-      await ctx.sendFollowUp({
-        content: "Unable to process this action, an error occurred",
-        ephemeral: true
-      })
-      return;
+      message.content = "Unable to process this action, an error occurred";
+      return message;
     }
     const success:boolean = response.success;
-
-    // Create the basis for the message to be sent over Discord.
-    var responseMessage:MessageOptions = {
-      ephemeral: true,
-    };
 
     // add to KV, make it die in about 5 minutes, this count refreshes per submission via the message app tool
     if (hadMessage && success) {
@@ -110,11 +115,11 @@ export class ScamGuardReport {
     if (firstReport) {
       // If they forwarded a message, then we can tell them they can report more
       if (hadMessage && success) {
-        responseMessage.content = `You can report more messages using the tool on from this DM channel to ScamGuard for ${chainTTL} more minutes`;
+        message.content = `You can report more messages using the tool on from this DM channel to ScamGuard for ${chainTTL} more minutes`;
       }
         
       // Create the embed anyways
-      responseMessage.embeds = [{
+      message.embeds = [{
         author: {
           name: "ScamGuard"
         },
@@ -138,12 +143,12 @@ export class ScamGuardReport {
       }];
     } else if (hadMessage) {
       if (!success) {
-        responseMessage.content = "Could not post to the thread, an error occurred. You may try again.";
+        message.content = "Could not post to the thread, an error occurred. You may try again.";
       } else {
-        responseMessage.content = `Message forwarded, you may submit more messages for ${chainTTL} more minutes`;
+        message.content = `Message forwarded, you may submit more messages for ${chainTTL} more minutes`;
       }
     }
 
-    await ctx.sendFollowUp(responseMessage);
+    return message;
   }
 };

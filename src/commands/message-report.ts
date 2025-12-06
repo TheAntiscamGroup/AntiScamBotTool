@@ -15,16 +15,20 @@ export default class MessageReport extends SlashCommand {
   async run(ctx: CommandContext<Cloudflare.Env>) {
     const msg = ctx.targetMessage;
     const env:Env = ctx.serverContext;
-    if (msg === undefined || msg === null)
-      return;
+    var errMsg:MessageOptions = {
+      ephemeral: true
+    };
+    
+    if (msg === undefined || msg === null) {
+      errMsg.content = "Could not get the target message, please try again later";
+      return errMsg;
+    }
 
     if (await HelperUtils.IsAccountForbidden(ctx.user.id, env)) {
-      await ctx.send({
-        content: HelperUtils.GetSupportLink(),
-        ephemeral: true
-      });
-      return;
+      errMsg.content = HelperUtils.GetSupportLink();
+      return errMsg;
     }
-    await ScamGuardReport.run(ctx);
+
+    return await ScamGuardReport.run(ctx);
   }
 };

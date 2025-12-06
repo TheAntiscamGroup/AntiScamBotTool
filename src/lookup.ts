@@ -5,24 +5,21 @@ export default class ScamGuardLookup {
   public static async run(ctx: CommandContext<Cloudflare.Env>, lookupUser: string) {
     const curUser:string = ctx.user.id;
     const env:Env = ctx.serverContext;
+    var message:MessageOptions = {
+      ephemeral: true
+    };
 
     // check if the given input is a correct number
     if (!HelperUtils.IsAccountValid(lookupUser)) {
       console.error(`${curUser} sent an input of ${lookupUser} which is invalid`);
-      await ctx.send({
-        ephemeral: true,
-        content:"The given input is not a valid Discord account"
-      });
-      return;
+      message.content = "The given input is not a valid Discord account";
+      return message;
     }
 
     // prevent the user from looking up themselves (which would be silly)
     if (lookupUser == curUser) {
-      await ctx.send({
-        ephemeral: true,
-        content: "You cannot use this command on yourself."
-      });
-      return;
+      message.content = "You cannot use this command on yourself.";
+      return message;
     }
 
     // we have to defer because we'll need to make some RPC out calls
@@ -31,11 +28,8 @@ export default class ScamGuardLookup {
     // Check if we are blocked from running this command
     const isForbidden = await HelperUtils.IsAccountForbidden(curUser, env);
     if (isForbidden) {
-      await ctx.sendFollowUp({
-        ephemeral: true,
-        content: HelperUtils.GetSupportLink()
-      });
-      return;
+      message.content = HelperUtils.GetSupportLink();
+      return message;
     }
 
     // Determine what the status is of the other user, if banned or not
@@ -44,42 +38,37 @@ export default class ScamGuardLookup {
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
     } else {
-      await ctx.sendFollowUp({
-        ephemeral: true,
-        content: "ScamGuard encountered an error while trying to determine user status"
-      });
-      return;
+      message.content = "ScamGuard encountered an error while trying to determine user status";
+      return message;
     }
 
     // Cool embeds for cool people yeah
-    const MessageResponse:MessageOptions = {
+    message = {
       ephemeral: true,
-      embeds: [
-        {
-          author: {
-            name: "ScamGuard"
+      embeds: [{
+        author: {
+          name: "ScamGuard"
+        },
+        thumbnail: {
+          url: "https://scamguard.app/assets/site-logo.png"
+        },
+        color: banStatus ? 15409961 : 5761827,
+        title: "Lookup Result",
+        fields: [
+          {
+            name: "User ID",
+            value: `\`${lookupUser}\``,
+            inline: true
           },
-          thumbnail: {
-            url: "https://scamguard.app/assets/site-logo.png"
-          },
-          color: banStatus ? 15409961 : 5761827,
-          title: "Lookup Result",
-          fields: [
-            {
-              name: "User ID",
-              value: `\`${lookupUser}\``,
-              inline: true
-            },
-            {
-              name: "Banned Status",
-              value: banStatus.toString(),
-              inline: true
-            }
-          ]
-        }
-      ]
+          {
+            name: "Banned Status",
+            value: banStatus.toString(),
+            inline: true
+          }
+        ]
+      }]
     };
     // Send the response to the user
-    await ctx.sendFollowUp(MessageResponse);
+    return message;
   }
 };

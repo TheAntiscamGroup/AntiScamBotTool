@@ -11,9 +11,13 @@ export default class ClickLookupCommand extends SlashCommand {
     });
   }
   async run(ctx: CommandContext<Cloudflare.Env>) {
-    if (ctx.targetUser === undefined || ctx.targetUser === null)
-      return;
+    if (ctx.targetUser === undefined || ctx.targetUser === null) {
+      return {
+        ephemeral: true,
+        content: "Could not decipher the target user, please try again."
+      };
+    }
 
-    await ScamGuardLookup.run(ctx, ctx.targetUser.id);
+    return await ScamGuardLookup.run(ctx, ctx.targetUser.id);
   }
 };
