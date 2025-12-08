@@ -9,7 +9,7 @@ export default class ForbidAccessHelper extends SlashCommand {
       guildIDs: guildID,
       type: ApplicationCommandType.CHAT_INPUT,
       name: "forbid",
-      description: "Forbid an user from using the tool",
+      description: "MOD: Forbid an user from using the tool",
       forcePermissions: true,
       requiredPermissions: ['MANAGE_GUILD'],
       options: [
