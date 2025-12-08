@@ -16,7 +16,7 @@ export default class HelperUtils {
   public static async IsAccountForbidden(account: string, env: Env): Promise<boolean> {
     // Can people be blocked from using this tool? 
     // This function checks access.
-    if (env.USES_BLOCKLIST === 'false')
+    if (env.USES_BLOCKLIST as string === 'false')
       return false;
 
     try {
@@ -29,7 +29,7 @@ export default class HelperUtils {
     return true;
   }
   public static async CanAccountReport(account: string, env: Env): Promise<boolean> {
-    if (env.ALL_CAN_REPORT === 'true')
+    if (env.ALL_CAN_REPORT as string === 'true')
       return true;
 
     try {

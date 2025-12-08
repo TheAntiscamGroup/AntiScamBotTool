@@ -2,11 +2,14 @@
 
 An installable Discord interactions tool that allows us to be able to more easily interact with accounts and ScamGuard.
 
+![image](/image.png)
+
 ## Features
 
 This Discord interaction contains:
 
 * `/lookup` - for looking up an user via a command in a DM
+* `/help` - prints out a very nice help screen
 * User Application Interaction - for looking up the user while looking at their profile
 * Message Application Interaction - for forwarding/reporting scammers easily
 * Helper functions for managing the tool that can be installed for a guild.

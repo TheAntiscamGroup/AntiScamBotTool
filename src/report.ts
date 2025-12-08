@@ -96,7 +96,7 @@ export class ScamGuardReport {
     }
 
     // get out if they're already banned.
-    if (banStatus === true && env.CAN_REPORT_BANNED !== 'true') {
+    if (banStatus === true && env.CAN_REPORT_BANNED as string !== 'true') {
       message.content = `The account \`${report.reportedID}\` has already been banned by ScamGuard.`;
       return message;
     }

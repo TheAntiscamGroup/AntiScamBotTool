@@ -20,6 +20,7 @@ export default class LookupCommand extends SlashCommand {
   async run(ctx: CommandContext<Cloudflare.Env>) {
     const curUser:string = ctx.user.id;
     const env:Env = ctx.serverContext;
+    // Since this command can be sent in bot DMs, determine if we should ephemeral it if sent there.
     const shouldStealth:boolean = ctx.context == InteractionContextType.BOT_DM ? false : true;
     await ctx.defer(shouldStealth);
 
@@ -34,7 +35,7 @@ export default class LookupCommand extends SlashCommand {
       {
         name: "Checking Accounts",
         value: `To check on an account:
-        
+
           1. Click the three dots on an user's profile card (_mobile_) or right click on the user's avatar (_desktop_).\n2. Select \`Apps\`\n3. Choose \`${CommandDescription.Check}\`\n\nIf the user shows up as Banned, then the mutual server is not using ScamGuard.`,
         inline: false,
       },
