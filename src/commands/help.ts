@@ -27,6 +27,13 @@ export default class LookupCommand extends SlashCommand {
     var message:MessageOptions = {
       ephemeral: shouldStealth,
     };
+
+    // Prevent usage if the user is forbidden.
+    if (await HelperUtils.IsAccountForbidden(curUser, env)) {
+      message.content = HelperUtils.GetSupportLink();
+      return message;
+    }
+
     var responseFields = [{
         name: "",
         value: "",
