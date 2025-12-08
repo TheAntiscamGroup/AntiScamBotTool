@@ -4,6 +4,7 @@ import HelperUtils from "./utils";
 export type ReportObject = {
   reportedID: string;
   reportedUserName: string;
+  reportTitle?: string;
   reporterName?: string;
   reporterID?: string;
   comments?: string;
@@ -33,10 +34,14 @@ export class ScamGuardReport {
       source: "User Tool"
     };
 
+    // lambda for making names easier
+    const escapeUserName = (username:string) => 
+      username.replace(/[.*+?^${}()_|[\]\\]/gm, '\\$&');
+
     const curUser:string = ctx.user.id;
     // override any passed in values
     report.reporterID = curUser;
-    report.reporterName = ctx.user.username;
+    report.reporterName = escapeUserName(ctx.user.username);
     report.posterName = "ScamGuard User Tool";
     report.source = "User Tool";
 
@@ -57,9 +62,11 @@ export class ScamGuardReport {
         message.content = "You cannot report on yourself";
         return message;
       }
+      const authorName:string = msg.author.username;
       report.reportedID = msg.author.id;
-      report.reportedUserName = msg.author.username;
-      report.messageEvidence = `${report.reportedUserName}: ${msg.content}`;
+      report.reportedUserName = escapeUserName(authorName);
+      report.reportTitle = authorName;
+      report.messageEvidence = `${authorName}: ${msg.content}`;
       // grab any attachments we might have as well
       if (msg.attachments.length > 0) {
         report.evidence = [];
@@ -80,7 +87,8 @@ export class ScamGuardReport {
       return message;
     }
 
-    if (banStatus === true) {
+    // get out if they're already banned.
+    if (banStatus === true && env.CAN_REPORT_BANNED !== 'true') {
       message.content = `The account \`${report.reportedID}\` has already been banned by ScamGuard.`;
       return message;
     }
@@ -99,10 +107,10 @@ export class ScamGuardReport {
       message.content = "Unable to process this action, an error occurred";
       return message;
     }
-    const success:boolean = response.success;
+    const reportSuccess:boolean = response.success;
 
     // add to KV, make it die in about 5 minutes, this count refreshes per submission via the message app tool
-    if (hadMessage && success) {
+    if (hadMessage && reportSuccess) {
       try {
         await env.REPORT_THREAD_CHAIN.put(channelSourceID, response.threadID, {
           expirationTtl: chainTTL * 60
@@ -111,11 +119,21 @@ export class ScamGuardReport {
         console.error(`Encountered an error trying to update thread KV ${err}`);
       }
     }
+
+    const getDiscordTimestamp = () => {
+      const date = new Date();
+      date.setMinutes(date.getMinutes() + chainTTL);
+      // It appears that Discord wants the timestamp in seconds, but I'm not sure for certain. 
+      // Couldn't find any methodology on it.
+      // Everyone just kept reporting this as the answer, which would chop off the last 3 ms characters.
+      return `<t:${date.getTime().toString().slice(0,-3)}>`;
+    };
+
     // If this is a first time report, then we show this embed.
     if (firstReport) {
       // If they forwarded a message, then we can tell them they can report more
-      if (hadMessage && success) {
-        message.content = `You can report more messages using the tool on from this DM channel to ScamGuard for ${chainTTL} more minutes`;
+      if (hadMessage && reportSuccess) {
+        message.content = `Any additional messages reported will be automatically attached to the initial report until ${getDiscordTimestamp()}`;
       }
         
       // Create the embed anyways
@@ -126,9 +144,14 @@ export class ScamGuardReport {
         thumbnail: {
           url: "https://scamguard.app/assets/site-logo.png"
         },
-        color: !success ? 15409961 : 5761827,
+        color: !reportSuccess ? 15409961 : 5761827,
         title: "Report",
         fields: [
+          {
+            name: "User Name",
+            value: report.reportedUserName,
+            inline: true
+          },
           {
             name: "User ID",
             value: `\`${report.reportedID}\``,
@@ -136,16 +159,16 @@ export class ScamGuardReport {
           },
           {
             name: "Report Status",
-            value: success ? response.threadLink : `Failed to report with code ${response.status}`,
+            value: reportSuccess ? response.threadLink : `Failed to report with code ${response.status}`,
             inline: true
           }
         ]
       }];
     } else if (hadMessage) {
-      if (!success) {
+      if (!reportSuccess) {
         message.content = "Could not post to the thread, an error occurred. You may try again.";
       } else {
-        message.content = `Message forwarded, you may submit more messages for ${chainTTL} more minutes`;
+        message.content = `Message forwarded, expiry updated. You may submit more messages to this report until ${getDiscordTimestamp()}`;
       }
     }
 

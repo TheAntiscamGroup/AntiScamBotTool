@@ -38,3 +38,5 @@ CONTROL_GUILD="1155997672667365406"
 USES_BLOCKLIST="true"
 # if everyone is allowed to report rather than checking KV entries
 ALL_CAN_REPORT="false"
+# if an user can be reported after already being banned
+CAN_REPORT_BANNED="false"
