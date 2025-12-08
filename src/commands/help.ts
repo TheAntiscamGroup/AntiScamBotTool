@@ -85,7 +85,7 @@ export default class LookupCommand extends SlashCommand {
       title: "How to Use",
       description: `The ScamGuard User Tool allows you to ${reportAction}look up accounts via the Discord Application Integration feature with DMs. 
 
-        **REMEMBER**: Do not tell the target you have this tool. This tool will only respond to you in messages that only you can see.`,
+        **REMEMBER**: Do not tell the target you have this tool. This tool will respond to you in messages that only you can see.`,
       fields: responseFields,
       footer: {
         text: "Any messages sent are subject to ScamGuard's Privacy Policy and Terms of Service"
