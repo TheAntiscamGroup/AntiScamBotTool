@@ -18,7 +18,18 @@ The end goal is to make everything work easier for users.
 
 You can forward messages directly to ScamGuard reporting + look up accounts all within the Discord UI.
 
-## Setup
+## Install
+
+To install the instance ran by TAG, you must:
+
+1. [Join the server](https://scamguard.app/discord).
+2. Find the `ScamGuard User Tool` account
+3. Open the profile card
+4. Click `+ Add App`
+
+While this app is in beta, we're holding back from a general access installation. These install steps will likely get easier over time.
+
+## Custom Setup
 
 This requires the following three protected secrets to be added to the worker environment. These can all be gotten from your Discord developer application dashboard.
 
