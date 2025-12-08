@@ -2,6 +2,19 @@
 const ScamGuardAccounts = ["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557"];
 
 export default class HelperUtils {
+  public static GetTimestamp(offsetTime: number|null=null): string {
+    const date = new Date();
+    if (offsetTime !== null)
+      date.setMinutes(date.getMinutes() + offsetTime);
+
+    // It appears that Discord wants the timestamp in seconds, but I'm not sure for certain. 
+    // Couldn't find any methodology on it.
+    // Everyone just kept reporting this as the answer, which would chop off the last 3 ms characters.
+    return `<t:${date.getTime().toString().slice(0,-3)}>`;
+  }
+  public static EscapeUserName(username: string): string {
+    return username.replace(/[.*+?^${}()_|[\]\\]/gm, '\\$&');
+  }
   public static IsAccountValid(account: string): boolean {
     if (account == null || account.length < 17 || account.length > 20)
       return false;
@@ -12,7 +25,7 @@ export default class HelperUtils {
 
     // check if it's all numbers
     return /^\d+$/.test(account);
-  };
+  }
   public static async IsAccountForbidden(account: string, env: Env): Promise<boolean> {
     // Can people be blocked from using this tool? 
     // This function checks access.

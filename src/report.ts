@@ -34,14 +34,10 @@ export class ScamGuardReport {
       source: "User Tool"
     };
 
-    // lambda for making names easier
-    const escapeUserName = (username:string) => 
-      username.replace(/[.*+?^${}()_|[\]\\]/gm, '\\$&');
-
     const curUser:string = ctx.user.id;
     // override any passed in values
     report.reporterID = curUser;
-    report.reporterName = escapeUserName(ctx.user.username);
+    report.reporterName = HelperUtils.EscapeUserName(ctx.user.username);
     report.posterName = "ScamGuard User Tool";
     report.source = "User Tool";
 
@@ -72,7 +68,7 @@ export class ScamGuardReport {
         return message;
       }
 
-      report.reportedUserName = escapeUserName(authorName);
+      report.reportedUserName = HelperUtils.EscapeUserName(authorName);
       report.reportTitle = authorName;
       report.messageEvidence = `${authorName}: ${msg.content}`;
       // grab any attachments we might have as well
@@ -109,7 +105,9 @@ export class ScamGuardReport {
     const firstReport = prevThreadID == null || prevThreadID == undefined;
     let response:ReportResponse;
     try {
-      response = (firstReport) ? await env.REPORT.post(report, true) : await env.REPORT.postFollowup(report, prevThreadID);
+      response = (firstReport) ? 
+        await env.REPORT.post(report, true) : 
+        await env.REPORT.postFollowup(report, prevThreadID);
     } catch(err) {
       console.error(`Encountered error on report ${report.reportedID}, was first ${firstReport}`);
       message.content = "Unable to process this action, an error occurred";
@@ -128,20 +126,12 @@ export class ScamGuardReport {
       }
     }
 
-    const getDiscordTimestamp = () => {
-      const date = new Date();
-      date.setMinutes(date.getMinutes() + chainTTL);
-      // It appears that Discord wants the timestamp in seconds, but I'm not sure for certain. 
-      // Couldn't find any methodology on it.
-      // Everyone just kept reporting this as the answer, which would chop off the last 3 ms characters.
-      return `<t:${date.getTime().toString().slice(0,-3)}>`;
-    };
-
     // If this is a first time report, then we show this embed.
     if (firstReport) {
       // If they forwarded a message, then we can tell them they can report more
       if (hadMessage && reportSuccess) {
-        message.content = `Any additional messages reported will be automatically attached to the initial report until ${getDiscordTimestamp()}`;
+        message.content = `Any additional messages reported will be automatically 
+        attached to the initial report until ${HelperUtils.GetTimestamp(chainTTL)}`;
       }
         
       // Create the embed anyways
@@ -176,7 +166,8 @@ export class ScamGuardReport {
       if (!reportSuccess) {
         message.content = "Could not post to the thread, an error occurred. You may try again.";
       } else {
-        message.content = `Message forwarded, expiry updated. You may submit more messages to this report until ${getDiscordTimestamp()}`;
+        message.content = `Message forwarded, expiry updated.\n 
+        You may submit more messages to this report until ${HelperUtils.GetTimestamp(chainTTL)}`;
       }
     }
 
