@@ -57,13 +57,21 @@ export class ScamGuardReport {
     
     if (hadMessage) {
       const msg = ctx.targetMessage;
+      const authorName:string = msg.author.username;
+      report.reportedID = msg.author.id;
+
       // have a little safety from potential mistakes
-      if (msg.author.id == curUser) {
+      if (report.reportedID == curUser) {
         message.content = "You cannot report on yourself";
         return message;
       }
-      const authorName:string = msg.author.username;
-      report.reportedID = msg.author.id;
+
+      // check if the given input is a correct number
+      if (!HelperUtils.IsAccountValid(report.reportedID)) {
+        message.content = "This account cannot be reported";
+        return message;
+      }
+
       report.reportedUserName = escapeUserName(authorName);
       report.reportTitle = authorName;
       report.messageEvidence = `${authorName}: ${msg.content}`;

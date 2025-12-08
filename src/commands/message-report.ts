@@ -1,5 +1,6 @@
 import { ApplicationCommandType, ApplicationIntegrationType, CommandContext, InteractionContextType, MessageOptions, SlashCommand, SlashCreator } from "slash-create/web";
 import { ScamGuardReport } from "../report";
+import { CommandDescription } from "../descriptions";
 import HelperUtils from "../utils";
 
 export default class MessageReport extends SlashCommand {
@@ -8,7 +9,7 @@ export default class MessageReport extends SlashCommand {
       contexts: [InteractionContextType.PRIVATE_CHANNEL],
       integrationTypes: [ApplicationIntegrationType.USER_INSTALL],
       type: ApplicationCommandType.MESSAGE,
-      name: "Report Message to ScamGuard",
+      name: CommandDescription.Report,
       deferEphemeral: true
     });
   }

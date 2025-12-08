@@ -1,5 +1,6 @@
 import { SlashCommand, SlashCreator, CommandContext, CommandOptionType, ApplicationIntegrationType, InteractionContextType } from "slash-create/web"
-import ScamGuardLookup from "../lookup";
+import { ScamGuardLookup } from "../lookup";
+import { CommandDescription } from "../descriptions";
 
 export default class LookupCommand extends SlashCommand {
   constructor(creator: SlashCreator) {
@@ -11,7 +12,7 @@ export default class LookupCommand extends SlashCommand {
         usages: 10,
       },
       name: "lookup",
-      description: "looks up the given account with ScamGuard",
+      description: CommandDescription.SlashCheck,
       options: [
         {
           type: CommandOptionType.MENTIONABLE,

@@ -1,4 +1,5 @@
 import { SlashCommand, SlashCreator, ApplicationCommandType, ApplicationIntegrationType, CommandContext, InteractionContextType, User, MessageOptions } from "slash-create/web"
+import { CommandDescription } from "../descriptions";
 import HelperUtils from "../utils";
 
 export default class AddPermissionsHelper extends SlashCommand {
@@ -8,7 +9,7 @@ export default class AddPermissionsHelper extends SlashCommand {
       integrationTypes: [ApplicationIntegrationType.GUILD_INSTALL],
       guildIDs: guildID,
       type: ApplicationCommandType.USER,
-      name: "MOD: Add to Tool Reporter",
+      name: CommandDescription.Add,
       forcePermissions: true,
       requiredPermissions: ['VIEW_AUDIT_LOG']
     });

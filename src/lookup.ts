@@ -1,7 +1,7 @@
 import { CommandContext, MessageOptions } from "slash-create/web";
 import HelperUtils from "./utils";
 
-export default class ScamGuardLookup {
+export class ScamGuardLookup {
   public static async run(ctx: CommandContext<Cloudflare.Env>, lookupUser: string) {
     const curUser:string = ctx.user.id;
     const env:Env = ctx.serverContext;

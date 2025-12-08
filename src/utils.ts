@@ -1,7 +1,13 @@
-// little helper that returns
+// List of all the public ScamGuard account ids
+const ScamGuardAccounts = ["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557"];
+
 export default class HelperUtils {
   public static IsAccountValid(account: string): boolean {
     if (account == null || account.length < 17 || account.length > 20)
+      return false;
+
+    // prevent the bot accounts from being reported.
+    if (ScamGuardAccounts.includes(account))
       return false;
 
     // check if it's all numbers
@@ -10,7 +16,7 @@ export default class HelperUtils {
   public static async IsAccountForbidden(account: string, env: Env): Promise<boolean> {
     // Can people be blocked from using this tool? 
     // This function checks access.
-    if (env.USES_BLOCKLIST === "false")
+    if (env.USES_BLOCKLIST === 'false')
       return false;
 
     try {
@@ -23,7 +29,7 @@ export default class HelperUtils {
     return true;
   }
   public static async CanAccountReport(account: string, env: Env): Promise<boolean> {
-    if (env.ALL_CAN_REPORT === "true")
+    if (env.ALL_CAN_REPORT === 'true')
       return true;
 
     try {

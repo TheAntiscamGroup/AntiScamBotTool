@@ -1,4 +1,5 @@
 import { SlashCommand, SlashCreator, ApplicationCommandType, ApplicationIntegrationType, CommandContext, InteractionContextType, CommandOptionType, MessageOptions } from "slash-create/web"
+import { CommandDescription } from "../descriptions";
 import HelperUtils from "../utils";
 
 export default class ForbidAccessHelper extends SlashCommand {
@@ -9,7 +10,7 @@ export default class ForbidAccessHelper extends SlashCommand {
       guildIDs: guildID,
       type: ApplicationCommandType.CHAT_INPUT,
       name: "forbid",
-      description: "MOD: Forbid an user from using the tool",
+      description: CommandDescription.Forbid,
       forcePermissions: true,
       requiredPermissions: ['MANAGE_GUILD'],
       options: [

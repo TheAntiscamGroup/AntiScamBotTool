@@ -1,5 +1,6 @@
 import { SlashCommand, SlashCreator, ApplicationCommandType, ApplicationIntegrationType, CommandContext, InteractionContextType } from "slash-create/web"
-import ScamGuardLookup from "../lookup";
+import { CommandDescription } from "../descriptions";
+import { ScamGuardLookup } from "../lookup";
 
 export default class ClickLookupCommand extends SlashCommand {
   constructor(creator: SlashCreator) {
@@ -7,7 +8,7 @@ export default class ClickLookupCommand extends SlashCommand {
       contexts: [InteractionContextType.PRIVATE_CHANNEL],
       integrationTypes: [ApplicationIntegrationType.USER_INSTALL],
       type: ApplicationCommandType.USER,
-      name: "Check with ScamGuard",
+      name: CommandDescription.Check,
     });
   }
   async run(ctx: CommandContext<Cloudflare.Env>) {
