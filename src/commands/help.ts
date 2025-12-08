@@ -1,4 +1,4 @@
-import { SlashCommand, SlashCreator, CommandContext, ApplicationIntegrationType, InteractionContextType, MessageOptions } from "slash-create/web"
+import { SlashCommand, SlashCreator, CommandContext, ApplicationIntegrationType, InteractionContextType, MessageOptions, EmbedField } from "slash-create/web"
 import HelperUtils from "../utils";
 import { CommandDescription } from "../descriptions";
 
@@ -23,6 +23,12 @@ export default class LookupCommand extends SlashCommand {
     // Since this command can be sent in bot DMs, determine if we should ephemeral it if sent there.
     const shouldStealth:boolean = ctx.context == InteractionContextType.BOT_DM ? false : true;
     await ctx.defer(shouldStealth);
+    // An empty embed field that's used as spacing
+    const spacingField:EmbedField = {
+      name: "",
+      value: "",
+      inline: false
+    }; 
 
     var message:MessageOptions = {
       ephemeral: shouldStealth,
@@ -34,18 +40,14 @@ export default class LookupCommand extends SlashCommand {
       return message;
     }
 
-    var responseFields = [{
-        name: "",
-        value: "",
-        inline: false
-      },
+    var responseFields = [spacingField,
       {
         name: "Checking Accounts",
         value: `To check on an account:
 
-          1. Click the three dots on an user's profile card (_mobile_) or right click on the user's avatar (_desktop_).\n2. Select \`Apps\`\n3. Choose \`${CommandDescription.Check}\`\n\nIf the user shows up as Banned, then the mutual server is not using ScamGuard.`,
+          1. Click the three dots on an user's profile card (_mobile_) or right click on the user's avatar (_desktop_).\n2. Select \`Apps\`\n3. Choose \`${CommandDescription.Check}\`\n\nIf the user shows up as **Banned**, then the mutual server is not using ScamGuard.`,
         inline: false,
-      },
+      }, spacingField
     ];
 
     var canReport:boolean = false;
@@ -53,11 +55,7 @@ export default class LookupCommand extends SlashCommand {
     // Check if the user can report
     if (await HelperUtils.CanAccountReport(curUser, env)) {
       canReport = true;
-      responseFields.push({
-        name: "",
-        value: "",
-        inline: false
-      }, 
+      responseFields.push(
       {
         name: "Reporting Accounts",
         value: `To report an account: 
@@ -71,8 +69,14 @@ export default class LookupCommand extends SlashCommand {
 
               This action can processes message attachments, such as images, and will include them in the report for you.`,
         inline: false,
-      });
+      }, spacingField);
     }
+    // Links to our policies
+    responseFields.push({
+      name: "Note",
+      value: "Messages shared are considered \`Scam Report evidence\` and are subject to our [Privacy Policy](https://scamguard.app/privacy).\n\nUsage of this tool means that you agree to our [Terms of Service](https://scamguard.app/terms)",
+      inline: false
+    })
     const reportAction:string = canReport ? "report and " : "";
     message.embeds = [{
       author: {

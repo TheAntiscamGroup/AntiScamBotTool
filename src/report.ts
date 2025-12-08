@@ -70,12 +70,13 @@ export class ScamGuardReport {
 
       report.reportedUserName = HelperUtils.EscapeUserName(authorName);
       report.reportTitle = authorName;
+      // formatting for the message evidence
       report.messageEvidence = `${authorName}: ${msg.content}`;
       // grab any attachments we might have as well
       if (msg.attachments.length > 0) {
         report.evidence = [];
         msg.attachments.forEach(el => {
-          console.log(`Found file: ${el.url} and proxy ${el.proxy_url}`);
+          //console.log(`Found file: ${el.url} and proxy ${el.proxy_url}`);
           report.evidence?.push(el.url);
         });
       }
