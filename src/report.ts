@@ -170,7 +170,7 @@ export class ScamGuardReport {
         console.warn(`Got error when reporting ${response.status}`);
       } else {
         message.content = "Message forwarded, expiry updated.\n";
-        message.content += `You may submit more messages to this report until ${HelperUtils.GetTimestamp(chainTTL)}`;
+        message.content += `You may submit more messages to this report until ${HelperUtils.GetTimestamp(chainTTL)}\n`;
       }
     }
 
