@@ -105,16 +105,17 @@ export class ScamGuardReport {
     const prevThreadID = await env.REPORT_THREAD_CHAIN.get(channelSourceID);
     const firstReport = prevThreadID == null || prevThreadID == undefined;
     let response:ReportResponse;
+    let reportSuccess:boolean = false;
     try {
       response = (firstReport) ? 
         await env.REPORT.post(report, true) : 
         await env.REPORT.postFollowup(report, prevThreadID);
+      reportSuccess = response.success;
     } catch(err) {
       console.error(`Encountered error on report ${report.reportedID}, was first ${firstReport}`);
-      message.content = "Unable to process this action, an error occurred";
+      message.content = "Unable to process this action, an error has occurred. Try again later.";
       return message;
     }
-    const reportSuccess:boolean = response.success;
 
     // add to KV, make it die in about 5 minutes, this count refreshes per submission via the message app tool
     if (hadMessage && reportSuccess) {
@@ -131,8 +132,8 @@ export class ScamGuardReport {
     if (firstReport) {
       // If they forwarded a message, then we can tell them they can report more
       if (hadMessage && reportSuccess) {
-        message.content = `Any additional messages reported will be automatically 
-        attached to the initial report until ${HelperUtils.GetTimestamp(chainTTL)}`;
+        message.content = "Any additional messages reported will be automatically attached\n";
+        message.content += `to the initial report until ${HelperUtils.GetTimestamp(chainTTL)}`;
       }
         
       // Create the embed anyways
@@ -158,7 +159,7 @@ export class ScamGuardReport {
           },
           {
             name: "Report Status",
-            value: reportSuccess ? response.threadLink : `Failed to report with code ${response.status}`,
+            value: reportSuccess ? response.threadLink : `Failed to report`,
             inline: true
           }
         ]
@@ -166,9 +167,10 @@ export class ScamGuardReport {
     } else if (hadMessage) {
       if (!reportSuccess) {
         message.content = "Could not post to the thread, an error occurred. You may try again.";
+        console.warn(`Got error when reporting ${response.status}`);
       } else {
-        message.content = `Message forwarded, expiry updated.\n 
-        You may submit more messages to this report until ${HelperUtils.GetTimestamp(chainTTL)}`;
+        message.content = "Message forwarded, expiry updated.\n";
+        message.content += `You may submit more messages to this report until ${HelperUtils.GetTimestamp(chainTTL)}`;
       }
     }
 
