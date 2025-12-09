@@ -19,14 +19,14 @@ function makeCreator(env: Record<string, any>) {
   creator.registerCommand(new AddPermissionsHelper(creator, controlGuild));
   creator.registerCommand(new ForbidAccessHelper(creator, controlGuild));
 
-  if (env.LOG_ERRORS !== "false") {
+  if (env.LOG_ERRORS as string !== "false") {
     creator.on('error', (error) => console.error(error.stack || error.toString()));
     creator.on('commandError', (command, error) =>
       console.error(`Command ${command.commandName} errored:`, error.stack || error.toString())
     );
   }
 
-  if (env.LOG_COMMAND_RUN !== "false") {
+  if (env.LOG_COMMAND_RUN as string !== "false") {
     creator.on('commandRun', (command, _, ctx) =>
       console.info(`${ctx.user.username} (${ctx.user.id}) ran command ${command.commandName}`)
     );
