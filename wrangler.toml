@@ -43,3 +43,5 @@ USES_BLOCKLIST="true"
 ALL_CAN_REPORT="false"
 # if an user can be reported after already being banned
 CAN_REPORT_BANNED="false"
+# link to the support thread
+SUPPORT_THREAD="https://discord.com/channels/1155997672667365406/1281338895430320218"

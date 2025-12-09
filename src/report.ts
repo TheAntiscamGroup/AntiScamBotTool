@@ -21,6 +21,13 @@ type ReportResponse = {
   success: boolean
 };
 
+const EmptyReportResponse:ReportResponse = {
+  status: 0,
+  threadLink: "",
+  threadID: "",
+  success: false
+};
+
 export class ScamGuardReport {
   public static async run(ctx: CommandContext<Cloudflare.Env>, overrideReport:ReportObject|null=null) {
     const env:Env = ctx.serverContext;
@@ -104,7 +111,7 @@ export class ScamGuardReport {
     const channelSourceID = ctx.channel.id;
     const prevThreadID = await env.REPORT_THREAD_CHAIN.get(channelSourceID);
     const firstReport = prevThreadID == null || prevThreadID == undefined;
-    let response:ReportResponse;
+    let response:ReportResponse = EmptyReportResponse;
     var reportSuccess:boolean = false;
     try {
       response = (firstReport) ? 
@@ -166,15 +173,22 @@ export class ScamGuardReport {
       }];
     } else if (hadMessage) {
       if (!reportSuccess) {
-        message.content = "Could not post to the thread, an error occurred. You may try again.";
         console.warn(`Got error when follow up reporting ${response.status}`);
         if (response.status === 400) {
           // Remove the channel source from the KV as an error has occurred.
           // 400 usually means bad request but it's extremely unlikely that we'll hit that because every tool
           // has validated all of it's potential data. So delete the thread KV info instead.
           await env.REPORT_THREAD_CHAIN.delete(channelSourceID);
+          message.content = "Post thread could no longer be found, please resubmit again shortly."
         } else if (response.status === 401) {
+          // Too long of a post
           message.content = "Post was too long to forward properly";
+        } else if (response.status === 0) {
+          // RPC did not respond
+          message.content = `Discord API did not respond. If this occurs again, please [open a support ticket](${env.SUPPORT_THREAD})`;
+        } else {
+          // General error
+          message.content = "Could not post to the thread, an error occurred. Please try again.";
         }
       } else {
         message.content = "Message forwarded, expiry updated.\n";
