@@ -167,7 +167,15 @@ export class ScamGuardReport {
     } else if (hadMessage) {
       if (!reportSuccess) {
         message.content = "Could not post to the thread, an error occurred. You may try again.";
-        console.warn(`Got error when reporting ${response.status}`);
+        console.warn(`Got error when follow up reporting ${response.status}`);
+        if (response.status === 400) {
+          // Remove the channel source from the KV as an error has occurred.
+          // 400 usually means bad request but it's extremely unlikely that we'll hit that because every tool
+          // has validated all of it's potential data. So delete the thread KV info instead.
+          await env.REPORT_THREAD_CHAIN.delete(channelSourceID);
+        } else if (response.status === 401) {
+          message.content = "Post was too long to forward properly";
+        }
       } else {
         message.content = "Message forwarded, expiry updated.\n";
         message.content += `You may submit more messages to this report until ${HelperUtils.GetTimestamp(chainTTL)}`;
