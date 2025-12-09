@@ -133,7 +133,7 @@ export class ScamGuardReport {
       // If they forwarded a message, then we can tell them they can report more
       if (hadMessage && reportSuccess) {
         message.content = "Any additional messages reported will be automatically attached\n";
-        message.content += `to the initial report until ${HelperUtils.GetTimestamp(chainTTL)}`;
+        message.content += `to the initial report until ${HelperUtils.GetTimestamp(chainTTL)}\n`;
       }
         
       // Create the embed anyways
@@ -170,7 +170,7 @@ export class ScamGuardReport {
         console.warn(`Got error when reporting ${response.status}`);
       } else {
         message.content = "Message forwarded, expiry updated.\n";
-        message.content += `You may submit more messages to this report until ${HelperUtils.GetTimestamp(chainTTL)}\n`;
+        message.content += `You may submit more messages to this report until ${HelperUtils.GetTimestamp(chainTTL)}`;
       }
     }
 
