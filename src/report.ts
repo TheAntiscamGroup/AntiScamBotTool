@@ -105,14 +105,14 @@ export class ScamGuardReport {
     const prevThreadID = await env.REPORT_THREAD_CHAIN.get(channelSourceID);
     const firstReport = prevThreadID == null || prevThreadID == undefined;
     let response:ReportResponse;
-    let reportSuccess:boolean = false;
+    var reportSuccess:boolean = false;
     try {
       response = (firstReport) ? 
         await env.REPORT.post(report, true) : 
         await env.REPORT.postFollowup(report, prevThreadID);
       reportSuccess = response.success;
     } catch(err) {
-      console.error(`Encountered error on report ${report.reportedID}, was first ${firstReport}`);
+      console.error(`Encountered error ${err} on report ${report.reportedID}, was first ${firstReport}`);
       message.content = "Unable to process this action, an error has occurred. Try again later.";
       return message;
     }
