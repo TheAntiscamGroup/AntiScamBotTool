@@ -26,6 +26,9 @@ kv_namespaces = [
 enabled = true
 head_sampling_rate = 1
 
+[placement]
+mode = "smart"
+
 [vars]
 # some logging settings
 LOG_COMMAND_RUN="true"
