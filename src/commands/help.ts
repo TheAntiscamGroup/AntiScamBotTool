@@ -64,7 +64,7 @@ export default class LookupCommand extends SlashCommand {
 
               You can use this action _multiple times_.
 
-              Each action will _automatically_ bundle the message into the same report so long as the action is taken within ${env.CHAIN_TTL} minutes of the last one.
+              Each action will _automatically_ bundle the message into the same report so long as it is done within \`${env.CHAIN_TTL}\` of the previous action.\n
               An expiration time will be provided upon each successful send.
 
               This action can processes message attachments, such as images, and will include them in the report for you.`,

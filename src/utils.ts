@@ -1,3 +1,6 @@
+import parse from 'parse-duration'
+import isEmpty from 'just-is-empty';
+
 // List of all the public ScamGuard account ids
 const ScamGuardAccounts = ["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557"];
 
@@ -5,12 +8,20 @@ export default class HelperUtils {
   public static GetTimestamp(offsetTime: number|null=null): string {
     const date = new Date();
     if (offsetTime !== null)
-      date.setMinutes(date.getMinutes() + offsetTime);
+      date.setSeconds(date.getSeconds() + offsetTime);
 
     // It appears that Discord wants the timestamp in seconds, but I'm not sure for certain. 
     // Couldn't find any methodology on it.
     // Everyone just kept reporting this as the answer, which would chop off the last 3 ms characters.
     return `<t:${date.getTime().toString().slice(0,-3)}>`;
+  }
+  // Gets the chain TTL time (in seconds)
+  public static GetChainTTLTime(env: Env): number {
+    const TTL:string = env.CHAIN_TTL;
+    if (isEmpty(TTL) || TTL.length > 100)
+      return 0;
+
+    return parse(TTL, 's') ?? 0;
   }
   public static EscapeUserName(username: string): string {
     return username.replace(/[.*+?^${}()_|[\]\\]/gm, '\\$&');

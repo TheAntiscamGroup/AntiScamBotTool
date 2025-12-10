@@ -33,8 +33,9 @@ mode = "smart"
 # some logging settings
 LOG_COMMAND_RUN="true"
 LOG_ERRORS="true"
-# time in minutes for how long we should chain forwarded messages
-CHAIN_TTL="5"
+# time for how long we should keep chain threads active
+# supports strings such as "1hr 5m"
+CHAIN_TTL="1d 6h 30m"
 # control/moderation flag overrides
 USES_BLOCKLIST="true"
 # if everyone is allowed to report rather than checking KV entries

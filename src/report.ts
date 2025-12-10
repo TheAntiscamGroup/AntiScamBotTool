@@ -105,8 +105,8 @@ export class ScamGuardReport {
       return message;
     }
 
-    // How long we will listen to incoming reports and redirect them
-    const chainTTL:number = Number(env.CHAIN_TTL);
+    // How long we will listen to incoming reports and redirect them (this is in seconds)
+    const chainTTL:number = HelperUtils.GetChainTTLTime(env);
 
     const channelSourceID = ctx.channel.id;
     const prevThreadID = await env.REPORT_THREAD_CHAIN.get(channelSourceID);
@@ -124,11 +124,11 @@ export class ScamGuardReport {
       return message;
     }
 
-    // add to KV, make it die in about 5 minutes, this count refreshes per submission via the message app tool
+    // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
     if (hadMessage && reportSuccess) {
       try {
         await env.REPORT_THREAD_CHAIN.put(channelSourceID, response.threadID, {
-          expirationTtl: chainTTL * 60
+          expirationTtl: chainTTL
         });
       } catch(err) {
         console.error(`Encountered an error trying to update thread KV ${err}`);
