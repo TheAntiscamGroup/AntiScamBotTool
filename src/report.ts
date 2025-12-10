@@ -105,9 +105,6 @@ export class ScamGuardReport {
       return message;
     }
 
-    // How long we will listen to incoming reports and redirect them (this is in seconds)
-    const chainTTL:number = HelperUtils.GetChainTTLTime(env);
-
     const channelSourceID = ctx.channel.id;
     const prevThreadID = await env.REPORT_THREAD_CHAIN.get(channelSourceID);
     const firstReport = prevThreadID == null || prevThreadID == undefined;
@@ -123,6 +120,9 @@ export class ScamGuardReport {
       message.content = "Unable to process this action, an error has occurred. Try again later.";
       return message;
     }
+
+    // How long we will listen to incoming reports and redirect them (this is in seconds)
+    const chainTTL:number = HelperUtils.GetChainTTLTime(env);
 
     // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
     if (hadMessage && reportSuccess) {

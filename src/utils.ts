@@ -19,9 +19,14 @@ export default class HelperUtils {
   public static GetChainTTLTime(env: Env): number {
     const TTL:string = env.CHAIN_TTL;
     if (isEmpty(TTL) || TTL.length > 100)
-      return 0;
+      return 60;
 
-    return parse(TTL, 's') ?? 0;
+    const TTLTime:number = Math.floor(parse(TTL, 's') ?? 60);
+    // cf requires the minimum number to be 60
+    if (TTLTime < 60)
+      return 60;
+
+    return TTLTime;
   }
   public static EscapeUserName(username: string): string {
     return username.replace(/[.*+?^${}()_|[\]\\]/gm, '\\$&');
