@@ -11,7 +11,7 @@ This Discord interaction contains:
 * `/lookup` - for looking up an user via a command in a DM
 * `/help` - prints out a very nice help screen
 * User Application Interaction - for looking up the user while looking at their profile
-* Message Application Interaction - for forwarding/reporting scammers easily
+* Message Application Interaction - for forwarding/reporting scammers easily as well as looking them up
 * Helper functions for managing the tool that can be installed for a guild.
 
 The end goal is to make everything work easier for users.  

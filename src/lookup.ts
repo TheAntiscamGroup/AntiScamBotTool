@@ -34,7 +34,17 @@ export class ScamGuardLookup {
 
     // Determine what the status is of the other user, if banned or not
     let banStatus = false;
-    const apiResponse = await env.API_SERVICE.checkAccount(lookupUser);
+    let apiResponse;
+
+    // Query to the API service
+    try {
+      apiResponse = await env.API_SERVICE.checkAccount(lookupUser);
+    } catch(err) {
+      console.error(`Encountered an error ${err} while checking the API service for ${lookupUser}`);
+      message.content = "The API service returned an error while doing an account check";
+      return message;
+    }
+    
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
     } else {

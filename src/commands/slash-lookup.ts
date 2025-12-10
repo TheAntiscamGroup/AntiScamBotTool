@@ -9,9 +9,10 @@ export default class LookupCommand extends SlashCommand {
       integrationTypes: [ApplicationIntegrationType.USER_INSTALL],
       throttling: {
         duration: 5,
-        usages: 10,
+        usages: 3,
       },
       name: "lookup",
+      deferEphemeral: true,
       description: CommandDescription.SlashCheck,
       options: [
         {
