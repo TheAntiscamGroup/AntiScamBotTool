@@ -2,6 +2,7 @@ import { commands } from './commands';
 import { SlashCreator, CloudflareWorkerServer } from 'slash-create/web';
 import AddPermissionsHelper from './commands/add-permissions';
 import ForbidAccessHelper from './commands/add-forbid';
+import isEmpty from 'just-is-empty';
 
 const cfServer = new CloudflareWorkerServer();
 let creator: SlashCreator;
@@ -14,10 +15,13 @@ function makeCreator(env: Record<string, any>) {
   });
   // base commands that can be used globally
   creator.withServer(cfServer).registerCommands(commands, false);
+  
   // explicit guild only commands
   const controlGuild:string = env.CONTROL_GUILD;
-  creator.registerCommand(new AddPermissionsHelper(creator, controlGuild));
-  creator.registerCommand(new ForbidAccessHelper(creator, controlGuild));
+  if (!isEmpty(controlGuild)) {
+    creator.registerCommand(new AddPermissionsHelper(creator, controlGuild));
+    creator.registerCommand(new ForbidAccessHelper(creator, controlGuild));
+  }
 
   if (env.LOG_ERRORS as string !== "false") {
     creator.on('error', (error) => console.error(error.stack || error.toString()));

@@ -31,11 +31,20 @@ While this app is in beta, we're holding back from a general access installation
 
 ## Custom Setup
 
-This requires the following three protected secrets to be added to the worker environment. These can all be gotten from your Discord developer application dashboard.
+This requires the following protected secrets to be added to the worker environment.  
+
+### Developer Settings
+
+These can all be gotten from your Discord developer application dashboard.
 
 * `DISCORD_APP_ID` - Public Application ID
 * `DISCORD_PUBLIC_KEY` - Application Public Key
 * `DISCORD_BOT_TOKEN` - Bot Token (gotten from the bot page)
+
+### Application Settings
+
+* `SUPPORT_THREAD` - The link to the support channel of the given Discord server
+* `CONTROL_GUILD`- The guild ID for adding the moderation commands to
 
 All other configurations can be handled by the `wrangler.toml` file.
 

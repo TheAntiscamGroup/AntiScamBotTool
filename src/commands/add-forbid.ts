@@ -1,6 +1,7 @@
 import { SlashCommand, SlashCreator, ApplicationCommandType, ApplicationIntegrationType, CommandContext, InteractionContextType, CommandOptionType, MessageOptions } from "slash-create/web"
 import { CommandDescription } from "../descriptions";
 import HelperUtils from "../utils";
+import isEmpty from "just-is-empty";
 
 export default class ForbidAccessHelper extends SlashCommand {
   constructor(creator: SlashCreator, guildID:string = "1155997672667365406") {
@@ -36,7 +37,7 @@ export default class ForbidAccessHelper extends SlashCommand {
     }
 
     // Technically shouldn't be necessary but we'll do it anyways
-    if (ctx.guildID !== env.CONTROL_GUILD) {
+    if (ctx.guildID !== env.CONTROL_GUILD && !isEmpty(env.CONTROL_GUILD)) {
       message.content = "This command is not allowed outside of the control guild";
       return message;
     }

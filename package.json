@@ -11,5 +11,8 @@
     "slash-create": "^6.7.1",
     "slash-up": "^1.4.2",
     "wrangler": "^4.53.0"
+  },
+  "dependencies": {
+    "just-is-empty": "^3.4.1"
   }
 }
