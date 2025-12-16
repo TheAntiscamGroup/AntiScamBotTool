@@ -31,6 +31,7 @@ const EmptyReportResponse:ReportResponse = {
 export class ScamGuardReport {
   public static async run(ctx: CommandContext<Cloudflare.Env>, overrideReport:ReportObject|null=null) {
     const env:Env = ctx.serverContext;
+    const usesUserThread:boolean = (env.USE_USER_TO_THREAD as string === 'true');
     var message:MessageOptions = {
       ephemeral: true
     };
@@ -106,7 +107,7 @@ export class ScamGuardReport {
     }
 
     const channelSourceID = ctx.channel.id;
-    const prevThreadID = await env.REPORT_THREAD_CHAIN.get(channelSourceID);
+    const prevThreadID = (usesUserThread) ? await env.USER_TO_REPORT_THREAD.get(report.reportedID) : await env.REPORT_THREAD_CHAIN.get(channelSourceID);
     const firstReport = prevThreadID == null || prevThreadID == undefined;
     let response:ReportResponse = EmptyReportResponse;
     var reportSuccess:boolean = false;
@@ -127,9 +128,14 @@ export class ScamGuardReport {
     // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
     if (hadMessage && reportSuccess) {
       try {
-        await env.REPORT_THREAD_CHAIN.put(channelSourceID, response.threadID, {
-          expirationTtl: chainTTL
-        });
+        if (usesUserThread) {
+          await env.USER_TO_REPORT_THREAD.put(report.reportedID, response.threadID);
+        } else {
+          await env.REPORT_THREAD_CHAIN.put(channelSourceID, response.threadID, {
+            expirationTtl: chainTTL
+          });
+        }
+
       } catch(err) {
         console.error(`Encountered an error trying to update thread KV ${err}`);
       }
@@ -139,8 +145,9 @@ export class ScamGuardReport {
     if (firstReport) {
       // If they forwarded a message, then we can tell them they can report more
       if (hadMessage && reportSuccess) {
-        message.content = "Any additional messages reported will be automatically attached\n";
-        message.content += `to the initial report until ${HelperUtils.GetTimestamp(chainTTL)}\n`;
+        message.content = "Any additional messages reported will be automatically attached\nto the initial report";
+        if (!usesUserThread)
+          message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}\n`;
       }
         
       // Create the embed anyways
@@ -178,7 +185,9 @@ export class ScamGuardReport {
           // Remove the channel source from the KV as an error has occurred.
           // 400 usually means bad request but it's extremely unlikely that we'll hit that because every tool
           // has validated all of it's potential data. So delete the thread KV info instead.
-          await env.REPORT_THREAD_CHAIN.delete(channelSourceID);
+          if (!usesUserThread)
+            await env.REPORT_THREAD_CHAIN.delete(channelSourceID);
+
           message.content = "Post thread could no longer be found, please resubmit again shortly."
         } else if (response.status === 401) {
           // Too long of a post
@@ -191,8 +200,9 @@ export class ScamGuardReport {
           message.content = "Could not post to the thread, an error occurred. Please try again.";
         }
       } else {
-        message.content = "Message forwarded, expiry updated.\n";
-        message.content += `You may submit more messages to this report until ${HelperUtils.GetTimestamp(chainTTL)}`;
+        message.content = "Message forwarded, expiry updated.\nYou may submit more messages to this report";
+        if (!usesUserThread)
+          message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}`;
       }
     }
 

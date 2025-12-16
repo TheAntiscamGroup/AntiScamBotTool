@@ -42,5 +42,37 @@ export default {
     if (!creator) 
       makeCreator(env);
     return cfServer.fetch(request, env, ctx);
-  }
+  },
+  async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
+    // Clean up the USER_TO_THREAD KV table if the user reported is banned.
+    if (env.USE_USER_TO_THREAD as string === 'true') {
+      let options = { cursor: "", limit: 200 };
+      // loop forever until we're done.
+      while (true) {
+        // list all the entries in the KV table
+        const response = await env.USER_TO_REPORT_THREAD.list(options);
+        // run through all the objects in the response
+        for (const userEntry of response.keys) {
+          try {
+            // Check our API to see if that user is banned
+            const apiResponse = await env.API_SERVICE.checkAccount(userEntry.name);
+            if (apiResponse.valid && apiResponse.banned) {
+              // They are banned, push a future ctx to delete them.
+              // This could also have been a bulk delete via the rest API but eh.
+              ctx.waitUntil(env.USER_TO_REPORT_THREAD.delete(userEntry.name));
+            }
+          } catch(err) {
+            console.error(`Encountered an error ${err} while trying to delete user ${userEntry} from the KV table`);
+            continue;
+          }
+        }
+        // loop again if we're not at the end of the KV table
+        if (response.list_complete !== true)
+          options.cursor = response.cursor;
+        else
+          break;
+      }
+      console.log("Finished processing cleanup.");
+    }
+  },
 };

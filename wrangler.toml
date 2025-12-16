@@ -19,6 +19,7 @@ kv_namespaces = [
   { binding="FORBID_LIST", id="fef7637f60014232bcab3794aa530db3"},
   { binding="CAN_REPORT", id="65a8b172d3014e11960367d0f4c8d480"},
   { binding="REPORT_THREAD_CHAIN", id="ccb03dbeefb34d82b56bbe44ad11a4a8" },
+  { binding="USER_TO_REPORT_THREAD", id="6acf800bb3fa47f88eb9d296a0808668" },
 ]
 
 [observability]
@@ -29,12 +30,18 @@ head_sampling_rate = 1
 [placement]
 mode = "smart"
 
+[triggers]
+crons = ["0 3 * * 2"]
+
 [vars]
 # some logging settings
 LOG_COMMAND_RUN="true"
 LOG_ERRORS="true"
+# if instead of chaining based on message source, chains are maintained based off user reported
+USE_USER_TO_THREAD="true"
 # time for how long we should keep chain threads active
 # supports strings such as "1hr 5m"
+# this only is used/works if USE_USER_TO_THREAD is false
 CHAIN_TTL="1d 6h 30m"
 # control/moderation flag overrides
 USES_BLOCKLIST="true"
