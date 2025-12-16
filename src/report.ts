@@ -200,7 +200,8 @@ export class ScamGuardReport {
           message.content = "Could not post to the thread, an error occurred. Please try again.";
         }
       } else {
-        message.content = "Message forwarded, expiry updated.\nYou may submit more messages to this report";
+        const expireUpdate:string = (!usesUserThread) ? ", expiry updated" : "";
+        message.content = `Message forwarded${expireUpdate}.\nYou may submit more messages to this report`;
         if (!usesUserThread)
           message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}`;
       }
