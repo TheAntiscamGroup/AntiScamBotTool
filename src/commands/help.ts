@@ -54,6 +54,7 @@ export default class LookupCommand extends SlashCommand {
 
     // Check if the user can report
     if (await HelperUtils.CanAccountReport(curUser, env)) {
+      const timeoutStr:string = (env.USE_USER_TO_THREAD as string !== 'true') ? ` and it is done within \`${env.CHAIN_TTL}\` of the previous action.\nAn expiration time will be provided upon each successful send` : "";
       canReport = true;
       responseFields.push(
       {
@@ -64,8 +65,7 @@ export default class LookupCommand extends SlashCommand {
 
               You can use this action _multiple times_.
 
-              Each action will _automatically_ bundle the message into the same report so long as it is done within \`${env.CHAIN_TTL}\` of the previous action.\n
-              An expiration time will be provided upon each successful send.
+              Each action will _automatically_ bundle the message into the same user report so long as they are not already banned${timeoutStr}.
 
               This action can processes message attachments, such as images, and will include them in the report for you.`,
         inline: false,
