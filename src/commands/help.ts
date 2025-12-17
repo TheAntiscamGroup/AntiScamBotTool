@@ -54,7 +54,7 @@ export default class LookupCommand extends SlashCommand {
 
     // Check if the user can report
     if (await HelperUtils.CanAccountReport(curUser, env)) {
-      const timeoutStr:string = (env.USE_USER_TO_THREAD as string !== 'true') ? ` and it is done within \`${env.CHAIN_TTL}\` of the previous action.\nAn expiration time will be provided upon each successful send` : "";
+      const timeoutStr:string = HelperUtils.CheckSetting(env.USE_USER_TO_THREAD, false) ? ` and it is done within \`${env.CHAIN_TTL}\` of the previous action.\nAn expiration time will be provided upon each successful send` : "";
       canReport = true;
       responseFields.push(
       {

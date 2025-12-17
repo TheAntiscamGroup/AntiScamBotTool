@@ -1,25 +1,6 @@
 import { CommandContext, MessageOptions } from "slash-create/web";
 import HelperUtils from "./utils";
-
-export type ReportObject = {
-  reportedID: string;
-  reportedUserName: string;
-  reportTitle?: string;
-  reporterName?: string;
-  reporterID?: string;
-  comments?: string;
-  messageEvidence?: string;
-  posterName?: string;
-  evidence?: string[];
-  source: string;
-};
-
-type ReportResponse = {
-  status: number,
-  threadLink: string,
-  threadID: string,
-  success: boolean
-};
+import { CheckAccountService, ReportAccountService, ReportObject, ReportResponse } from "./services";
 
 const EmptyReportResponse:ReportResponse = {
   status: 0,
@@ -31,7 +12,7 @@ const EmptyReportResponse:ReportResponse = {
 export class ScamGuardReport {
   public static async run(ctx: CommandContext<Cloudflare.Env>, overrideReport:ReportObject|null=null) {
     const env:Env = ctx.serverContext;
-    const usesUserThread:boolean = (env.USE_USER_TO_THREAD as string === 'true');
+    const usesUserThread:boolean = HelperUtils.CheckSetting(env.USE_USER_TO_THREAD, true);
     var message:MessageOptions = {
       ephemeral: true
     };
@@ -92,7 +73,7 @@ export class ScamGuardReport {
 
     // Check to see if account is already banned.
     let banStatus = false;
-    const apiResponse = await env.API_SERVICE.checkAccount(report.reportedID);
+    const apiResponse = await (env.API_SERVICE as CheckAccountService).checkAccount(report.reportedID);
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
     } else {
@@ -101,20 +82,20 @@ export class ScamGuardReport {
     }
 
     // get out if they're already banned.
-    if (banStatus === true && env.CAN_REPORT_BANNED as string !== 'true') {
+    if (banStatus === true && HelperUtils.CheckSetting(env.CAN_REPORT_BANNED, false)) {
       message.content = `The account \`${report.reportedID}\` has already been banned by ScamGuard.`;
       return message;
     }
 
     const channelSourceID = ctx.channel.id;
-    const prevThreadID = (usesUserThread) ? await env.USER_TO_REPORT_THREAD.get(report.reportedID) : await env.REPORT_THREAD_CHAIN.get(channelSourceID);
+    const lookupKey:string = (usesUserThread) ? report.reportedID : channelSourceID;
+    const prevThreadID = await env.REPORT_THREAD_CHAIN.get(lookupKey);
     const firstReport = prevThreadID == null || prevThreadID == undefined;
     let response:ReportResponse = EmptyReportResponse;
     var reportSuccess:boolean = false;
     try {
-      response = (firstReport) ? 
-        await env.REPORT.post(report, true) : 
-        await env.REPORT.postFollowup(report, prevThreadID);
+      const reporter:ReportAccountService = (env.REPORT as ReportAccountService);
+      response = (firstReport) ? await reporter.post(report, true) : await reporter.postFollowup(report, prevThreadID);
       reportSuccess = response.success;
     } catch(err) {
       console.error(`Encountered error ${err} on report ${report.reportedID}, was first ${firstReport}`);
@@ -128,14 +109,13 @@ export class ScamGuardReport {
     // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
     if (hadMessage && reportSuccess) {
       try {
-        if (usesUserThread) {
-          await env.USER_TO_REPORT_THREAD.put(report.reportedID, response.threadID);
-        } else {
-          await env.REPORT_THREAD_CHAIN.put(channelSourceID, response.threadID, {
+        let options:any = {};
+        if (!usesUserThread) {
+          options = {
             expirationTtl: chainTTL
-          });
+          };
         }
-
+        await env.REPORT_THREAD_CHAIN.put(lookupKey, response.threadID, options);
       } catch(err) {
         console.error(`Encountered an error trying to update thread KV ${err}`);
       }

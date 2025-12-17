@@ -18,8 +18,7 @@ routes = [
 kv_namespaces = [
   { binding="FORBID_LIST", id="fef7637f60014232bcab3794aa530db3"},
   { binding="CAN_REPORT", id="65a8b172d3014e11960367d0f4c8d480"},
-  { binding="REPORT_THREAD_CHAIN", id="ccb03dbeefb34d82b56bbe44ad11a4a8" },
-  { binding="USER_TO_REPORT_THREAD", id="6acf800bb3fa47f88eb9d296a0808668" },
+  { binding="REPORT_THREAD_CHAIN", id="6acf800bb3fa47f88eb9d296a0808668" },
 ]
 
 [observability]

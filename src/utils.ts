@@ -5,6 +5,10 @@ import isEmpty from 'just-is-empty';
 const ScamGuardAccounts = ["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557"];
 
 export default class HelperUtils {
+  public static CheckSetting(setting: any, value: boolean): boolean {
+    const checkAgainst:string = value ? "true" : "false";
+    return (setting as string) == checkAgainst;
+  }
   public static GetTimestamp(offsetTime: number|null=null): string {
     const date = new Date();
     if (offsetTime !== null)
@@ -45,7 +49,7 @@ export default class HelperUtils {
   public static async IsAccountForbidden(account: string, env: Env): Promise<boolean> {
     // Can people be blocked from using this tool? 
     // This function checks access.
-    if (env.USES_BLOCKLIST as string === 'false')
+    if (HelperUtils.CheckSetting(env.USES_BLOCKLIST, false))
       return false;
 
     try {
@@ -58,7 +62,7 @@ export default class HelperUtils {
     return true;
   }
   public static async CanAccountReport(account: string, env: Env): Promise<boolean> {
-    if (env.ALL_CAN_REPORT as string === 'true')
+    if (HelperUtils.CheckSetting(env.ALL_CAN_REPORT, true))
       return true;
 
     try {
