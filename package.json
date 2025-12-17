@@ -7,7 +7,7 @@
     "deploy": "wrangler deploy"
   },
   "devDependencies": {
-    "@types/node": "^24.10.4",
+    "@types/node": "^25.0.3",
     "slash-create": "^6.7.1",
     "slash-up": "^1.4.2",
     "wrangler": "^4.55.0"
