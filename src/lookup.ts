@@ -1,4 +1,5 @@
 import { CommandContext, MessageOptions } from "slash-create/web";
+import { CheckAccountService } from "./services";
 import HelperUtils from "./utils";
 
 export class ScamGuardLookup {
@@ -38,7 +39,7 @@ export class ScamGuardLookup {
 
     // Query to the API service
     try {
-      apiResponse = await env.API_SERVICE.checkAccount(lookupUser);
+      apiResponse = await (env.API_SERVICE as CheckAccountService).checkAccount(lookupUser);
     } catch(err) {
       console.error(`Encountered an error ${err} while checking the API service for ${lookupUser}`);
       message.content = "The API service returned an error while doing an account check";
