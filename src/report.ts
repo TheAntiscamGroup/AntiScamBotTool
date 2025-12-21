@@ -57,8 +57,8 @@ export class ScamGuardReport {
         return message;
       }
 
-      report.reportedUserName = HelperUtils.EscapeUserName(authorName);
-      report.reportTitle = authorName;
+      report.reportedUserName = authorName;
+      report.reportTitle = HelperUtils.EscapeUserName(authorName);
       // formatting for the message evidence
       report.messageEvidence = `${authorName}: ${msg.content}`;
       // grab any attachments we might have as well
