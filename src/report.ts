@@ -125,7 +125,7 @@ export class ScamGuardReport {
     if (firstReport) {
       // If they forwarded a message, then we can tell them they can report more
       if (hadMessage && reportSuccess) {
-        message.content = "Any additional messages reported will be automatically attached\nto the initial report";
+        message.content = "Any additional messages reported will be automatically attached to the initial report";
         if (!usesUserThread)
           message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}\n`;
       }
