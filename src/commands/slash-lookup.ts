@@ -2,7 +2,7 @@ import { SlashCommand, SlashCreator, CommandContext, CommandOptionType, Applicat
 import { ScamGuardLookup } from "../lookup";
 import { CommandDescription } from "../descriptions";
 
-export default class LookupCommand extends SlashCommand {
+export default class SlashLookupCommand extends SlashCommand {
   constructor(creator: SlashCreator) {
     super(creator, {
       contexts: [InteractionContextType.PRIVATE_CHANNEL],

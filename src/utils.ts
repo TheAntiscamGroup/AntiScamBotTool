@@ -33,7 +33,7 @@ export default class HelperUtils {
     return TTLTime;
   }
   public static EscapeUserName(username: string): string {
-    return username.replace(/[.*+?^${}()_|[\]\\]/gm, '\\$&');
+    return username.replace(/[_]/g, '\_');
   }
   public static IsAccountValid(account: string): boolean {
     if (account == null || account.length < 17 || account.length > 20)

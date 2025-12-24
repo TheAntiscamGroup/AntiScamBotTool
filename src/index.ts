@@ -1,9 +1,10 @@
 import { commands } from './commands';
 import { SlashCreator, CloudflareWorkerServer } from 'slash-create/web';
+import { CheckAccountService } from './services';
 import AddPermissionsHelper from './commands/add-permissions';
 import ForbidAccessHelper from './commands/add-forbid';
+import SlashLookupCommand from './commands/slash-lookup';
 import isEmpty from 'just-is-empty';
-import { CheckAccountService } from './services';
 import HelperUtils from './utils';
 
 const cfServer = new CloudflareWorkerServer();
@@ -17,6 +18,11 @@ function makeCreator(env: Record<string, any>) {
   });
   // base commands that can be used globally
   creator.withServer(cfServer).registerCommands(commands, false);
+
+  // check to see if we should register the /lookup command
+  if (HelperUtils.CheckSetting(env.USE_SLASH_LOOKUP, true)) {
+    creator.registerCommand(new SlashLookupCommand(creator));
+  }
   
   // explicit guild only commands
   const controlGuild:string = env.CONTROL_GUILD;
