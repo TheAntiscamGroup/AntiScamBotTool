@@ -8,7 +8,7 @@ An installable Discord interactions tool that allows us to be able to more easil
 
 This Discord interaction contains:
 
-* `/lookup` - for looking up an user via a command in a DM
+* `/lookup` - for looking up an user via a command in a DM. This command can be disabled via the environment settings.
 * `/help` - prints out a very nice help screen
 * User Application Interaction - for looking up the user while looking at their profile
 * Message Application Interaction - for forwarding/reporting scammers easily as well as looking them up
