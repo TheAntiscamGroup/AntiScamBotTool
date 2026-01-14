@@ -1,6 +1,9 @@
-import { ApplicationCommandType, ApplicationIntegrationType, CommandContext, InteractionContextType, MessageOptions, SlashCommand, SlashCreator } from "slash-create/web";
-import { ScamGuardReport } from "../report";
+import {
+  ApplicationCommandType, ApplicationIntegrationType, CommandContext,
+  InteractionContextType, MessageOptions, SlashCommand, SlashCreator
+} from "slash-create/web";
 import { CommandDescription } from "../descriptions";
+import { ScamGuardReport } from "../report";
 import HelperUtils from "../utils";
 
 export default class MessageReport extends SlashCommand {

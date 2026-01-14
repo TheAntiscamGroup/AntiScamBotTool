@@ -1,7 +1,9 @@
-import { SlashCommand, SlashCreator, CommandContext, ApplicationIntegrationType, InteractionContextType, MessageOptions, EmbedField } from "slash-create/web"
-import HelperUtils from "../utils";
+import {
+  ApplicationIntegrationType, CommandContext, EmbedField,
+  InteractionContextType, MessageOptions, SlashCommand, SlashCreator
+} from "slash-create/web";
 import { CommandDescription } from "../descriptions";
-
+import HelperUtils from "../utils";
 
 export default class LookupCommand extends SlashCommand {
   constructor(creator: SlashCreator) {

@@ -1,4 +1,7 @@
-import { SlashCommand, SlashCreator, ApplicationCommandType, ApplicationIntegrationType, CommandContext, InteractionContextType, CommandOptionType, MessageOptions } from "slash-create/web"
+import {
+  ApplicationCommandType, ApplicationIntegrationType, CommandContext, CommandOptionType,
+  InteractionContextType, MessageOptions, SlashCommand, SlashCreator
+} from "slash-create/web";
 import { CommandDescription } from "../descriptions";
 import HelperUtils from "../utils";
 import isEmpty from "just-is-empty";

@@ -1,6 +1,9 @@
-import { SlashCommand, SlashCreator, CommandContext, CommandOptionType, ApplicationIntegrationType, InteractionContextType } from "slash-create/web"
-import { ScamGuardLookup } from "../lookup";
+import {
+  ApplicationIntegrationType, CommandContext, CommandOptionType,
+  InteractionContextType, SlashCommand, SlashCreator
+} from "slash-create/web";
 import { CommandDescription } from "../descriptions";
+import { ScamGuardLookup } from "../lookup";
 
 export default class SlashLookupCommand extends SlashCommand {
   constructor(creator: SlashCreator) {

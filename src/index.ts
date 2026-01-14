@@ -1,11 +1,11 @@
+import { CloudflareWorkerServer, SlashCreator } from 'slash-create/web';
 import { commands } from './commands';
-import { SlashCreator, CloudflareWorkerServer } from 'slash-create/web';
-import { CheckAccountService } from './services';
-import AddPermissionsHelper from './commands/add-permissions';
 import ForbidAccessHelper from './commands/add-forbid';
+import AddPermissionsHelper from './commands/add-permissions';
 import SlashLookupCommand from './commands/slash-lookup';
-import isEmpty from 'just-is-empty';
+import { CheckAccountService } from './services';
 import HelperUtils from './utils';
+import isEmpty from 'just-is-empty';
 
 const cfServer = new CloudflareWorkerServer();
 let creator: SlashCreator;

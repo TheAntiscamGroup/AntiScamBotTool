@@ -1,5 +1,5 @@
-import parse from 'parse-duration'
 import isEmpty from 'just-is-empty';
+import parse from 'parse-duration';
 
 // List of all the public ScamGuard account ids
 const ScamGuardAccounts = ["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557"];

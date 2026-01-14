@@ -1,4 +1,7 @@
-import { SlashCommand, SlashCreator, ApplicationCommandType, ApplicationIntegrationType, CommandContext, InteractionContextType } from "slash-create/web"
+import {
+  ApplicationCommandType, ApplicationIntegrationType, CommandContext,
+  InteractionContextType, SlashCommand, SlashCreator
+} from "slash-create/web";
 import { CommandDescription } from "../descriptions";
 import { ScamGuardLookup } from "../lookup";
 
