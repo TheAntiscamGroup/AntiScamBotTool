@@ -1,6 +1,7 @@
 import { CommandContext, MessageOptions } from "slash-create/web";
-import HelperUtils from "./utils";
 import { CheckAccountService, ReportAccountService, ReportObject, ReportResponse } from "./services";
+import HelperUtils from "./utils";
+import isEmpty from "just-is-empty";
 
 const EmptyReportResponse:ReportResponse = {
   status: 0,
@@ -72,7 +73,7 @@ export class ScamGuardReport {
     }
 
     // Check to see if account is already banned.
-    let banStatus = false;
+    let banStatus:boolean = false;
     const apiResponse = await (env.API_SERVICE as CheckAccountService).checkAccount(report.reportedID);
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
@@ -87,10 +88,18 @@ export class ScamGuardReport {
       return message;
     }
 
-    const channelSourceID = ctx.channel.id;
+    const channelSourceID:string = ctx.channel.id;
     const lookupKey:string = (usesUserThread) ? report.reportedID : channelSourceID;
-    const prevThreadID = await env.REPORT_THREAD_CHAIN.get(lookupKey);
-    const firstReport = prevThreadID == null || prevThreadID == undefined;
+    const prevThreadID = await env.REPORT_THREAD_CHAIN.get(lookupKey) || "";
+    const firstReport:boolean = isEmpty(prevThreadID);
+
+    // If the id can no longer be found in the database and the user is banned, then exit out.
+    // This can only happen if CAN_REPORT_BANNED is true
+    if (firstReport && banStatus === true) {
+      message.content = `It is too late to add additional messages to the report`;
+      return message;
+    }
+    
     let response:ReportResponse = EmptyReportResponse;
     var reportSuccess:boolean = false;
     try {

@@ -47,6 +47,6 @@ USES_BLOCKLIST="true"
 # if everyone is allowed to report rather than checking KV entries
 ALL_CAN_REPORT="false"
 # if an user can be reported after already being banned
-CAN_REPORT_BANNED="false"
+CAN_REPORT_BANNED="true"
 # If /lookup is enabled, the click commands are better than being typed (less potential for error)
 USE_SLASH_LOOKUP="false"
