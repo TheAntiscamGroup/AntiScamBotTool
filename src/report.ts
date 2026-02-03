@@ -193,6 +193,8 @@ export class ScamGuardReport {
         message.content = `Message forwarded${expireUpdate}.\nYou may submit more messages to [this report](${response.threadLink})`;
         if (!usesUserThread)
           message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}`;
+        
+        message.content += `.`;
       }
     }
 
