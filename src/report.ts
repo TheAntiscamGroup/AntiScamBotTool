@@ -190,7 +190,7 @@ export class ScamGuardReport {
         }
       } else {
         const expireUpdate:string = (!usesUserThread) ? ", expiry updated" : "";
-        message.content = `Message forwarded${expireUpdate}.\nYou may submit more messages to this report`;
+        message.content = `Message forwarded${expireUpdate}.\nYou may submit more messages to [this report](${response.threadLink})`;
         if (!usesUserThread)
           message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}`;
       }
