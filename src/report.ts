@@ -27,7 +27,7 @@ export class ScamGuardReport {
     const curUser:string = ctx.user.id;
     // override any passed in values
     report.reporterID = curUser;
-    report.reporterName = HelperUtils.EscapeUserName(ctx.user.username);
+    report.reporterName = ctx.user.username;
     report.posterName = "ScamGuard User Tool";
     report.source = "User Tool";
 
@@ -59,7 +59,7 @@ export class ScamGuardReport {
       }
 
       report.reportedUserName = authorName;
-      report.reportTitle = HelperUtils.EscapeUserName(authorName);
+      report.reportTitle = authorName;
       // formatting for the message evidence
       report.messageEvidence = `${authorName}: ${msg.content}`;
       // grab any attachments we might have as well
