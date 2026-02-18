@@ -8,7 +8,7 @@
   },
   "devDependencies": {
     "@types/node": "^24.10.9",
-    "slash-create": "^6.7.1",
+    "slash-create": "^6.8.0",
     "slash-up": "^1.4.2",
     "wrangler": "^4.61.1"
   },
