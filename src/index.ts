@@ -45,7 +45,7 @@ function makeCreator(env: Record<string, any>) {
 
 export default {
   async fetch(request: any, env: Record<string, any>, ctx: ExecutionContext) {
-    if (env.APPLICATION_SETTINGS.redirect_to_install && request.method !== "POST") {
+    if (env.APP_SETTINGS.redirect_to_install && request.method !== "POST") {
       return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
     }
 
@@ -55,7 +55,7 @@ export default {
   },
   async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
     // Clean up the USER_TO_THREAD KV table if the user reported is banned.
-    if (env.REPORT_SETTINGS.use_message_source) {
+    if (env.REPORT_SETTINGS.thread_by_user) {
       let options = { cursor: "", limit: 200 };
       // loop forever until we're done.
       while (true) {

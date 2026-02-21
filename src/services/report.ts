@@ -12,7 +12,7 @@ const EmptyReportResponse: ReportResponse = {
 export class ScamGuardReport {
   public static async run(ctx: CommandContext<Cloudflare.Env>, overrideReport: ReportObject|null=null) {
     const env: Env = ctx.serverContext;
-    const usesUserThread: boolean = env.REPORT_SETTINGS.use_message_source;
+    const usesUserThread: boolean = env.REPORT_SETTINGS.thread_by_user;
     var message: MessageOptions = {
       ephemeral: true
     };

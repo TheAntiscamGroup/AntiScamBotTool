@@ -12,7 +12,7 @@ declare type CommandSettings = {
 declare type ReportSettings = {
   allow_all: boolean;
   report_banned: boolean;
-  use_message_source: boolean;
+  thread_by_user: boolean;
   message_source_lifetime?: string;
 };
 
