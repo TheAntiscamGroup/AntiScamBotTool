@@ -1,9 +1,8 @@
-import { CommandContext, MessageOptions } from "slash-create/web";
-import { CheckAccountService, ReportAccountService, ReportObject, ReportResponse } from "./services";
-import HelperUtils from "./utils";
 import isEmpty from "just-is-empty";
+import { CommandContext, MessageOptions } from "slash-create/web";
+import HelperUtils from "../utils";
 
-const EmptyReportResponse:ReportResponse = {
+const EmptyReportResponse: ReportResponse = {
   status: 0,
   threadLink: "",
   threadID: "",
@@ -11,20 +10,20 @@ const EmptyReportResponse:ReportResponse = {
 };
 
 export class ScamGuardReport {
-  public static async run(ctx: CommandContext<Cloudflare.Env>, overrideReport:ReportObject|null=null) {
-    const env:Env = ctx.serverContext;
-    const usesUserThread:boolean = HelperUtils.CheckSetting(env.USE_USER_TO_THREAD, true);
-    var message:MessageOptions = {
+  public static async run(ctx: CommandContext<Cloudflare.Env>, overrideReport: ReportObject|null=null) {
+    const env: Env = ctx.serverContext;
+    const usesUserThread: boolean = env.REPORT_SETTINGS.use_message_source;
+    var message: MessageOptions = {
       ephemeral: true
     };
 
-    let report:ReportObject = overrideReport != null ? overrideReport : {
+    let report: ReportObject = overrideReport != null ? overrideReport : {
       reportedID: "",
       reportedUserName: "",
       source: "User Tool"
     };
 
-    const curUser:string = ctx.user.id;
+    const curUser: string = ctx.user.id;
     // override any passed in values
     report.reporterID = curUser;
     report.reporterName = ctx.user.username;
@@ -40,10 +39,10 @@ export class ScamGuardReport {
 
     // If this was sent via a right click message report
     const hadMessage = (ctx.targetMessage !== null && ctx.targetMessage !== undefined);
-    
+
     if (hadMessage) {
       const msg = ctx.targetMessage;
-      const authorName:string = msg.author.username;
+      const authorName: string = msg.author.username;
       report.reportedID = msg.author.id;
 
       // have a little safety from potential mistakes
@@ -53,7 +52,7 @@ export class ScamGuardReport {
       }
 
       // check if the given input is a correct number
-      if (!HelperUtils.IsAccountValid(report.reportedID)) {
+      if (!HelperUtils.IsAccountValid(env, report.reportedID)) {
         message.content = "This account cannot be reported";
         return message;
       }
@@ -73,7 +72,7 @@ export class ScamGuardReport {
     }
 
     // Check to see if account is already banned.
-    let banStatus:boolean = false;
+    let banStatus: boolean = false;
     const apiResponse = await (env.API_SERVICE as CheckAccountService).checkAccount(report.reportedID);
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
@@ -83,27 +82,27 @@ export class ScamGuardReport {
     }
 
     // get out if they're already banned.
-    if (banStatus === true && HelperUtils.CheckSetting(env.CAN_REPORT_BANNED, false)) {
+    if (banStatus === true && !env.REPORT_SETTINGS.report_banned) {
       message.content = `The account \`${report.reportedID}\` has already been banned by ScamGuard.`;
       return message;
     }
 
-    const channelSourceID:string = ctx.channel.id;
-    const lookupKey:string = (usesUserThread) ? report.reportedID : channelSourceID;
+    const channelSourceID: string = ctx.channel.id;
+    const lookupKey: string = (usesUserThread) ? report.reportedID : channelSourceID;
     const prevThreadID = await env.REPORT_THREAD_CHAIN.get(lookupKey) || "";
-    const firstReport:boolean = isEmpty(prevThreadID);
+    const firstReport: boolean = isEmpty(prevThreadID);
 
     // If the id can no longer be found in the database and the user is banned, then exit out.
-    // This can only happen if CAN_REPORT_BANNED is true
+    // This can only happen if report_banned is true
     if (firstReport && banStatus === true) {
       message.content = `It is too late to add additional messages to the report`;
       return message;
     }
-    
-    let response:ReportResponse = EmptyReportResponse;
-    var reportSuccess:boolean = false;
+
+    let response: ReportResponse = EmptyReportResponse;
+    var reportSuccess: boolean = false;
     try {
-      const reporter:ReportAccountService = (env.REPORT as ReportAccountService);
+      const reporter: ReportAccountService = (env.REPORT as ReportAccountService);
       response = (firstReport) ? await reporter.post(report, true) : await reporter.postFollowup(report, prevThreadID);
       reportSuccess = response.success;
     } catch(err) {
@@ -113,12 +112,12 @@ export class ScamGuardReport {
     }
 
     // How long we will listen to incoming reports and redirect them (this is in seconds)
-    const chainTTL:number = HelperUtils.GetChainTTLTime(env);
+    const chainTTL: number = HelperUtils.GetChainTTLTime(env);
 
     // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
     if (hadMessage && reportSuccess) {
       try {
-        let options:any = {};
+        let options: any = {};
         if (!usesUserThread) {
           options = {
             expirationTtl: chainTTL
@@ -134,11 +133,11 @@ export class ScamGuardReport {
     if (firstReport) {
       // If they forwarded a message, then we can tell them they can report more
       if (hadMessage && reportSuccess) {
-        message.content = "Any additional messages reported will be automatically attached to the initial report";
+        message.content = "You can continue to report more messages via the same method and they will be automatically attached to the initial report";
         if (!usesUserThread)
           message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}\n`;
       }
-        
+
       // Create the embed anyways
       message.embeds = [{
         author: {
@@ -189,11 +188,11 @@ export class ScamGuardReport {
           message.content = "Could not post to the thread, an error occurred. Please try again.";
         }
       } else {
-        const expireUpdate:string = (!usesUserThread) ? ", expiry updated" : "";
+        const expireUpdate: string = (!usesUserThread) ? ", expiry updated" : "";
         message.content = `Message forwarded${expireUpdate}.\nYou may submit more messages to [this report](${response.threadLink})`;
         if (!usesUserThread)
           message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}`;
-        
+
         message.content += `.`;
       }
     }

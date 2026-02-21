@@ -3,12 +3,14 @@ main = "src/index.ts"
 compatibility_flags = [ "nodejs_compat" ]
 compatibility_date = "2025-11-25"
 send_metrics = false
+minify = true
+upload_source_maps = true
 preview_urls = false
 workers_dev = false
 
 services = [
   { binding = "API_SERVICE", service = "antiscamapi", entrypoint = "APILookup" },
-  { binding = "REPORT", service="antiscamreport", entrypoint="ScamReportBridge"},
+  { binding = "REPORT", service="antiscamreport", entrypoint="ScamReportBridge" },
 ]
 
 routes = [
@@ -25,6 +27,14 @@ kv_namespaces = [
 [observability.logs]
 enabled = true
 head_sampling_rate = 1
+[observability.traces]
+enabled = true
+head_sampling_rate = 0.5
+persist = true
+
+# flags required to run wrangler in linux
+[dev]
+ip = "127.0.0.1"
 
 [placement]
 mode = "smart"
@@ -33,20 +43,20 @@ mode = "smart"
 crons = ["0 3 * * 2"]
 
 [vars]
-# some logging settings
-LOG_COMMAND_RUN="true"
-LOG_ERRORS="true"
-# if instead of chaining based on message source, chains are maintained based off user reported
-USE_USER_TO_THREAD="true"
-# time for how long we should keep chain threads active
-# supports strings such as "1hr 5m"
-# this only is used/works if USE_USER_TO_THREAD is false
-CHAIN_TTL="1d 6h 30m"
-# control/moderation flag overrides
-USES_BLOCKLIST="true"
-# if everyone is allowed to report rather than checking KV entries
-ALL_CAN_REPORT="true"
-# if an user can be reported after already being banned
-CAN_REPORT_BANNED="true"
-# If /lookup is enabled, the click commands are better than being typed (less potential for error)
-USE_SLASH_LOOKUP="false"
+# redirect_to_install: if the tool should redirect to install on invalid pathing
+# accounts: other accounts that are related to this app
+APP_SETTINGS={redirect_to_install=true, accounts=["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557"]}
+
+# log_run: should commands log their execution
+# log_errors: should we log error messages
+# use_forbid_list: if the tool should check if an user is not allowed
+COMMAND_SETTINGS={log_run=true, log_errors=true, use_forbid_list=true}
+
+# allow_all: if all users can report, allow list unneeded
+# report_banned: if banned accounts can continue to be reported until cleanup
+# use_message_source: if reports should be based on source channel or by the reported account
+# message_source_lifetime: time of how long we should keep chain threads active. only used if use_message_source is true
+REPORT_SETTINGS={allow_all=true, report_banned=true, use_message_source=false, message_source_lifetime="1d 6h 30m"}
+
+# slash_enabled: if /lookup is enabled. Usually disabled to prevent mistakes
+LOOKUP_SETTINGS={slash_enabled=false}

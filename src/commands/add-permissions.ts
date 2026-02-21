@@ -1,13 +1,13 @@
+import isEmpty from "just-is-empty";
 import {
   ApplicationCommandType, ApplicationIntegrationType, CommandContext,
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator, User
 } from "slash-create/web";
 import { CommandDescription } from "../descriptions";
 import HelperUtils from "../utils";
-import isEmpty from "just-is-empty";
 
 export default class AddPermissionsHelper extends SlashCommand {
-  constructor(creator: SlashCreator, guildID:string = "1155997672667365406") {
+  constructor(creator: SlashCreator, guildID: string) {
     super(creator, {
       contexts: [InteractionContextType.GUILD],
       integrationTypes: [ApplicationIntegrationType.GUILD_INSTALL],
@@ -19,9 +19,9 @@ export default class AddPermissionsHelper extends SlashCommand {
     });
   }
   async run(ctx: CommandContext<Cloudflare.Env>) {
-    const env:Env = ctx.serverContext;
-    const targetUser:User|null|undefined = ctx.targetUser;
-    var responseMsg:MessageOptions = {
+    const env: Env = ctx.serverContext;
+    const targetUser: User|null|undefined = ctx.targetUser;
+    var responseMsg: MessageOptions = {
       ephemeral: true
     };
 

@@ -3,7 +3,7 @@ import {
   InteractionContextType, SlashCommand, SlashCreator
 } from "slash-create/web";
 import { CommandDescription } from "../descriptions";
-import { ScamGuardLookup } from "../lookup";
+import { ScamGuardLookup } from "../services/lookup";
 
 export default class MessageLookupCommand extends SlashCommand {
   constructor(creator: SlashCreator) {

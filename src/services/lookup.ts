@@ -1,17 +1,16 @@
 import { CommandContext, MessageOptions } from "slash-create/web";
-import { CheckAccountService } from "./services";
-import HelperUtils from "./utils";
+import HelperUtils from "../utils";
 
 export class ScamGuardLookup {
   public static async run(ctx: CommandContext<Cloudflare.Env>, lookupUser: string) {
-    const curUser:string = ctx.user.id;
-    const env:Env = ctx.serverContext;
-    var message:MessageOptions = {
+    const curUser: string = ctx.user.id;
+    const env: Env = ctx.serverContext;
+    var message: MessageOptions = {
       ephemeral: true
     };
 
     // check if the given input is a correct number
-    if (!HelperUtils.IsAccountValid(lookupUser)) {
+    if (!HelperUtils.IsAccountValid(env, lookupUser)) {
       console.error(`${curUser} sent an input of ${lookupUser} which is invalid`);
       message.content = "The given input is not a valid Discord account";
       return message;
@@ -29,7 +28,7 @@ export class ScamGuardLookup {
     // Check if we are blocked from running this command
     const isForbidden = await HelperUtils.IsAccountForbidden(curUser, env);
     if (isForbidden) {
-      message.content = HelperUtils.GetSupportLink();
+      message.content = HelperUtils.GetSupportLink(env);
       return message;
     }
 
@@ -45,7 +44,7 @@ export class ScamGuardLookup {
       message.content = "The API service returned an error while doing an account check";
       return message;
     }
-    
+
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
     } else {

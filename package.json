@@ -3,7 +3,7 @@
   "name": "antiscambottool",
   "scripts": {
     "sync": "slash-up sync",
-    "types": "wrangler types src/types.d.ts",
+    "types": "wrangler types src/types/wrangler.d.ts",
     "deploy": "wrangler deploy"
   },
   "devDependencies": {

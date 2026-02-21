@@ -1,13 +1,13 @@
+import isEmpty from "just-is-empty";
 import {
   ApplicationCommandType, ApplicationIntegrationType, CommandContext, CommandOptionType,
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator
 } from "slash-create/web";
 import { CommandDescription } from "../descriptions";
 import HelperUtils from "../utils";
-import isEmpty from "just-is-empty";
 
 export default class ForbidAccessHelper extends SlashCommand {
-  constructor(creator: SlashCreator, guildID:string = "1155997672667365406") {
+  constructor(creator: SlashCreator, guildID: string) {
     super(creator, {
       contexts: [InteractionContextType.GUILD],
       integrationTypes: [ApplicationIntegrationType.GUILD_INSTALL],
@@ -28,13 +28,13 @@ export default class ForbidAccessHelper extends SlashCommand {
     });
   }
   async run(ctx: CommandContext<Cloudflare.Env>) {
-    const env:Env = ctx.serverContext;
-    const targetUser:string|null|undefined = ctx.options["account"];
-    var message:MessageOptions = {
+    const env: Env = ctx.serverContext;
+    const targetUser: string|null|undefined = ctx.options["account"];
+    var message: MessageOptions = {
       ephemeral: true,
     };
 
-    if (targetUser === undefined || targetUser === null || !HelperUtils.IsAccountValid(targetUser)) {
+    if (targetUser === undefined || targetUser === null || !HelperUtils.IsAccountValid(env, targetUser)) {
       message.content = `\`${targetUser}\` is invalid!`;
       return message;
     }

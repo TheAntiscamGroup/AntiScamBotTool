@@ -14,7 +14,7 @@ This Discord interaction contains:
 * Message Application Interaction - for forwarding/reporting scammers easily as well as looking them up
 * Helper functions for managing the tool that can be installed for a guild.
 
-The end goal is to make everything work easier for users.  
+The end goal is to make everything work easier for users.
 
 You can forward messages directly to ScamGuard reporting + look up accounts all within the Discord UI.
 
@@ -31,7 +31,10 @@ While this app is in beta, we're holding back from a general access installation
 
 ## Custom Setup
 
-This requires the following protected secrets to be added to the worker environment.  
+This requires the following protected secrets to be added to the worker environment.
+The easiest way to do so is to copy `.env.example` as `.env` and fill out the various settings flags below
+
+Once set, you can use `npx wrangler secret bulk .env` to bulk upload your secrets to your worker instance.
 
 ### Developer Settings
 
@@ -43,8 +46,8 @@ These can all be gotten from your Discord developer application dashboard.
 
 ### Application Settings
 
-* `SUPPORT_THREAD` - The link to the support channel of the given Discord server
-* `CONTROL_GUILD`- The guild ID for adding the moderation commands to
+* `SUPPORT_THREAD` - The discord https link to the support channel of the given Discord server
+* `CONTROL_GUILD`- The numeric guild ID for adding the moderation commands to
 
 All other configurations can be handled by the `wrangler.toml` file.
 

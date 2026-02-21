@@ -20,25 +20,25 @@ export default class LookupCommand extends SlashCommand {
   }
 
   async run(ctx: CommandContext<Cloudflare.Env>) {
-    const curUser:string = ctx.user.id;
-    const env:Env = ctx.serverContext;
+    const curUser: string = ctx.user.id;
+    const env: Env = ctx.serverContext;
     // Since this command can be sent in bot DMs, determine if we should ephemeral it if sent there.
-    const shouldStealth:boolean = ctx.context == InteractionContextType.BOT_DM ? false : true;
+    const shouldStealth: boolean = ctx.context == InteractionContextType.BOT_DM ? false : true;
     await ctx.defer(shouldStealth);
     // An empty embed field that's used as spacing
-    const spacingField:EmbedField = {
+    const spacingField: EmbedField = {
       name: "",
       value: "",
       inline: false
-    }; 
+    };
 
-    var message:MessageOptions = {
+    var message: MessageOptions = {
       ephemeral: shouldStealth,
     };
 
     // Prevent usage if the user is forbidden.
     if (await HelperUtils.IsAccountForbidden(curUser, env)) {
-      message.content = HelperUtils.GetSupportLink();
+      message.content = HelperUtils.GetSupportLink(env);
       return message;
     }
 
@@ -52,16 +52,16 @@ export default class LookupCommand extends SlashCommand {
       }, spacingField
     ];
 
-    var canReport:boolean = false;
+    var canReport: boolean = false;
 
     // Check if the user can report
     if (await HelperUtils.CanAccountReport(curUser, env)) {
-      const timeoutStr:string = HelperUtils.CheckSetting(env.USE_USER_TO_THREAD, false) ? ` and it is done within \`${env.CHAIN_TTL}\` of the previous action.\nAn expiration time will be provided upon each successful send` : "";
+      const timeoutStr: string = !env.REPORT_SETTINGS.use_message_source ? ` and it is done within \`${env.REPORT_SETTINGS.message_source_lifetime || 60}\` of the previous action.\nAn expiration time will be provided upon each successful send` : "";
       canReport = true;
       responseFields.push(
       {
         name: "Reporting Accounts",
-        value: `To report an account: 
+        value: `To report an account:
 
               1. Right click (_desktop_) or long hold (_mobile_) on any message.\n2. Select \`Apps\`\n3. Choose \`${CommandDescription.Report}\`
 
@@ -79,7 +79,7 @@ export default class LookupCommand extends SlashCommand {
       value: "Messages shared are considered \`Scam Report evidence\` and are subject to our [Privacy Policy](https://scamguard.app/privacy).\n\nUsage of this tool means that you agree to our [Terms of Service](https://scamguard.app/terms)",
       inline: false
     })
-    const reportAction:string = canReport ? "report and " : "";
+    const reportAction: string = canReport ? "report and " : "";
     message.embeds = [{
       author: {
         name: "ScamGuard User Tool"
@@ -89,7 +89,7 @@ export default class LookupCommand extends SlashCommand {
       },
       color: 2303786,
       title: "How to Use",
-      description: `The ScamGuard User Tool allows you to ${reportAction}look up accounts via the Discord Application Integration feature with DMs. 
+      description: `The ScamGuard User Tool allows you to ${reportAction}look up accounts via the Discord Application Integration feature with DMs.
 
         **REMEMBER**: Do not tell the target you have this tool. This tool will respond to you in messages that only you can see.`,
       fields: responseFields,

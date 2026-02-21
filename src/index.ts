@@ -1,11 +1,9 @@
+import isEmpty from 'just-is-empty';
 import { CloudflareWorkerServer, SlashCreator } from 'slash-create/web';
 import { commands } from './commands';
 import ForbidAccessHelper from './commands/add-forbid';
 import AddPermissionsHelper from './commands/add-permissions';
 import SlashLookupCommand from './commands/slash-lookup';
-import { CheckAccountService } from './services';
-import HelperUtils from './utils';
-import isEmpty from 'just-is-empty';
 
 const cfServer = new CloudflareWorkerServer();
 let creator: SlashCreator;
@@ -20,25 +18,25 @@ function makeCreator(env: Record<string, any>) {
   creator.withServer(cfServer).registerCommands(commands, false);
 
   // check to see if we should register the /lookup command
-  if (HelperUtils.CheckSetting(env.USE_SLASH_LOOKUP, true)) {
+  if (env.LOOKUP_SETTINGS.slash_enabled) {
     creator.registerCommand(new SlashLookupCommand(creator));
   }
-  
+
   // explicit guild only commands
-  const controlGuild:string = env.CONTROL_GUILD;
+  const controlGuild: string = env.CONTROL_GUILD;
   if (!isEmpty(controlGuild)) {
     creator.registerCommand(new AddPermissionsHelper(creator, controlGuild));
     creator.registerCommand(new ForbidAccessHelper(creator, controlGuild));
   }
 
-  if (HelperUtils.CheckSetting(env.LOG_ERRORS, true)) {
+  if (env.COMMAND_SETTINGS.log_errors) {
     creator.on('error', (error) => console.error(error.stack || error.toString()));
     creator.on('commandError', (command, error) =>
       console.error(`Command ${command.commandName} errored:`, error.stack || error.toString())
     );
   }
 
-  if (HelperUtils.CheckSetting(env.LOG_COMMAND_RUN, true)) {
+  if (env.COMMAND_SETTINGS.log_run) {
     creator.on('commandRun', (command, _, ctx) =>
       console.info(`${ctx.user.username} (${ctx.user.id}) ran command ${command.commandName}`)
     );
@@ -47,13 +45,17 @@ function makeCreator(env: Record<string, any>) {
 
 export default {
   async fetch(request: any, env: Record<string, any>, ctx: ExecutionContext) {
-    if (!creator) 
+    if (env.APPLICATION_SETTINGS.redirect_to_install && request.method !== "POST") {
+      return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
+    }
+
+    if (!creator)
       makeCreator(env);
     return cfServer.fetch(request, env, ctx);
   },
   async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
     // Clean up the USER_TO_THREAD KV table if the user reported is banned.
-    if (HelperUtils.CheckSetting(env.USE_USER_TO_THREAD, true)) {
+    if (env.REPORT_SETTINGS.use_message_source) {
       let options = { cursor: "", limit: 200 };
       // loop forever until we're done.
       while (true) {

@@ -17,5 +17,9 @@
     "./src/**/*.ts",
     "node"
   ],
+  "types": [
+    "node",
+    "./src/types/*"
+  ],
   "exclude": ["node_modules/", "dist/"]
 }
