@@ -2,7 +2,7 @@ import {
   ApplicationIntegrationType, CommandContext, EmbedField,
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator
 } from "slash-create/web";
-import { CommandDescription } from "../descriptions";
+import { APP_EMBED_THUMBNAIL, APP_NAME, CommandDescription, PRIVACY_LINK, TOS_LINK } from "../consts";
 import HelperUtils from "../utils";
 
 export default class LookupCommand extends SlashCommand {
@@ -47,7 +47,7 @@ export default class LookupCommand extends SlashCommand {
         name: "Checking Accounts",
         value: `To check on an account:
 
-          1. Click the three dots on an user's profile card (_mobile_) or right click on the user's avatar (_desktop_).\n2. Select \`Apps\`\n3. Choose \`${CommandDescription.Check}\`\n\nIf the user shows up as **Banned**, then the mutual server is not using ScamGuard.`,
+          1. Click the three dots on an user's profile card (_mobile_) or right click on the user's avatar (_desktop_).\n2. Select \`Apps\`\n3. Choose \`${CommandDescription.Check}\`\n\nIf the user shows up as **Banned**, then the mutual server is not using ${APP_NAME}.`,
         inline: false,
       }, spacingField
     ];
@@ -76,25 +76,25 @@ export default class LookupCommand extends SlashCommand {
     // Links to our policies
     responseFields.push({
       name: "Note",
-      value: "Messages shared are considered \`Scam Report evidence\` and are subject to our [Privacy Policy](https://scamguard.app/privacy).\n\nUsage of this tool means that you agree to our [Terms of Service](https://scamguard.app/terms)",
+      value: `Messages shared are considered \`Scam Report evidence\` and are subject to our [Privacy Policy](${PRIVACY_LINK}).\n\nUsage of this tool means that you agree to our [Terms of Service](${TOS_LINK})`,
       inline: false
     })
     const reportAction: string = canReport ? "report and " : "";
     message.embeds = [{
       author: {
-        name: "ScamGuard User Tool"
+        name: `${APP_NAME} User Tool`
       },
       thumbnail: {
-        url: "https://scamguard.app/assets/site-logo.png"
+        url: APP_EMBED_THUMBNAIL
       },
       color: 2303786,
       title: "How to Use",
-      description: `The ScamGuard User Tool allows you to ${reportAction}look up accounts via the Discord Application Integration feature with DMs.
+      description: `The ${APP_NAME} User Tool allows you to ${reportAction}look up accounts via the Discord Application Integration feature with DMs.
 
         **REMEMBER**: Do not tell the target you have this tool. This tool will respond to you in messages that only you can see.`,
       fields: responseFields,
       footer: {
-        text: "Any messages sent are subject to ScamGuard's Privacy Policy and Terms of Service"
+        text: `Any messages sent are subject to ${APP_NAME}'s Privacy Policy and Terms of Service`
       }
     }];
     return message;

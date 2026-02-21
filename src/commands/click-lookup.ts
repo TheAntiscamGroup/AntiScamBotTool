@@ -2,7 +2,7 @@ import {
   ApplicationCommandType, ApplicationIntegrationType, CommandContext,
   InteractionContextType, SlashCommand, SlashCreator
 } from "slash-create/web";
-import { CommandDescription } from "../descriptions";
+import { CommandDescription } from "../consts";
 import { ScamGuardLookup } from "../services/lookup";
 
 export default class ClickLookupCommand extends SlashCommand {

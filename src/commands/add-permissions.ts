@@ -3,7 +3,7 @@ import {
   ApplicationCommandType, ApplicationIntegrationType, CommandContext,
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator, User
 } from "slash-create/web";
-import { CommandDescription } from "../descriptions";
+import { CommandDescription } from "../consts";
 import HelperUtils from "../utils";
 
 export default class AddPermissionsHelper extends SlashCommand {

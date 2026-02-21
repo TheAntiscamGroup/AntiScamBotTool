@@ -2,7 +2,7 @@ import {
   ApplicationCommandType, ApplicationIntegrationType, CommandContext,
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator
 } from "slash-create/web";
-import { CommandDescription } from "../descriptions";
+import { CommandDescription } from "../consts";
 import { ScamGuardReport } from "../services/report";
 import HelperUtils from "../utils";
 

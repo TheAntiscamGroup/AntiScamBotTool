@@ -1,4 +1,5 @@
 import { CommandContext, MessageOptions } from "slash-create/web";
+import { APP_EMBED_THUMBNAIL, APP_NAME } from "../consts";
 import HelperUtils from "../utils";
 
 export class ScamGuardLookup {
@@ -45,11 +46,27 @@ export class ScamGuardLookup {
       return message;
     }
 
+    let reportThread = {
+      name: "Report Thread",
+      value: "",
+      inline: true
+    };
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
+      if (apiResponse.thread !== undefined) {
+        reportThread.value = apiResponse.thread;
+      }
     } else {
-      message.content = "ScamGuard encountered an error while trying to determine user status";
+      message.content = `${APP_NAME} encountered an error while trying to determine user status`;
       return message;
+    }
+
+    // Check if we have a reported thread on them
+    if (reportThread.value === "" && env.REPORT_SETTINGS.thread_by_user) {
+      const reportThreadId: string|null = await env.REPORT_THREAD_CHAIN.get(lookupUser);
+      if (reportThreadId !== null) {
+        reportThread.value = `https://discord.com/channels/${env.CONTROL_GUILD}/${reportThreadId}`;
+      }
     }
 
     // Cool embeds for cool people yeah
@@ -57,10 +74,10 @@ export class ScamGuardLookup {
       ephemeral: true,
       embeds: [{
         author: {
-          name: "ScamGuard"
+          name: APP_NAME
         },
         thumbnail: {
-          url: "https://scamguard.app/assets/site-logo.png"
+          url: APP_EMBED_THUMBNAIL
         },
         color: banStatus ? 15409961 : 5761827,
         title: "Lookup Result",
@@ -74,10 +91,12 @@ export class ScamGuardLookup {
             name: "Banned Status",
             value: banStatus.toString(),
             inline: true
-          }
+          },
         ]
       }]
     };
+    if (reportThread.value !== "")
+      message.embeds![0].fields!.push(reportThread);
     // Send the response to the user
     return message;
   }

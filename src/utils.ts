@@ -73,6 +73,6 @@ export default class HelperUtils {
   public static GetSupportLink(env: Env): string {
     return "You are currently forbidden from using this tool. " +
     `Please [Open a Support ticket](${env.SUPPORT_THREAD}) ` +
-    "on the TAG Server if you think this is an error.";
+    "if you believe this is an error.";
   }
 };

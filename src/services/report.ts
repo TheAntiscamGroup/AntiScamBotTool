@@ -1,5 +1,6 @@
 import isEmpty from "just-is-empty";
 import { CommandContext, MessageOptions } from "slash-create/web";
+import { APP_EMBED_THUMBNAIL, APP_NAME } from "../consts";
 import HelperUtils from "../utils";
 
 const EmptyReportResponse: ReportResponse = {
@@ -27,7 +28,7 @@ export class ScamGuardReport {
     // override any passed in values
     report.reporterID = curUser;
     report.reporterName = ctx.user.username;
-    report.posterName = "ScamGuard User Tool";
+    report.posterName = `${APP_NAME} User Tool`;
     report.source = "User Tool";
 
     await ctx.defer(true);
@@ -77,13 +78,13 @@ export class ScamGuardReport {
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
     } else {
-      message.content = "ScamGuard encountered an error while deferring user id, please try again";
+      message.content = `${APP_NAME} encountered an error while deferring user id, please try again`;
       return message;
     }
 
     // get out if they're already banned.
     if (banStatus === true && !env.REPORT_SETTINGS.report_banned) {
-      message.content = `The account \`${report.reportedID}\` has already been banned by ScamGuard.`;
+      message.content = `The account \`${report.reportedID}\` has already been banned by ${APP_NAME}.`;
       return message;
     }
 
@@ -117,12 +118,9 @@ export class ScamGuardReport {
     // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
     if (hadMessage && reportSuccess) {
       try {
-        let options: any = {};
-        if (!usesUserThread) {
-          options = {
-            expirationTtl: chainTTL
-          };
-        }
+        let options: KVNamespacePutOptions = {
+          expirationTtl: (!usesUserThread) ? chainTTL : undefined
+        };
         await env.REPORT_THREAD_CHAIN.put(lookupKey, response.threadID, options);
       } catch(err) {
         console.error(`Encountered an error trying to update thread KV ${err}`);
@@ -133,7 +131,7 @@ export class ScamGuardReport {
     if (firstReport) {
       // If they forwarded a message, then we can tell them they can report more
       if (hadMessage && reportSuccess) {
-        message.content = "You can continue to report more messages via the same method and they will be automatically attached to the initial report";
+        message.content = `You can add even more messages to this report by using the integration again. Messages will be bundled together for you`;
         if (!usesUserThread)
           message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}\n`;
       }
@@ -141,10 +139,10 @@ export class ScamGuardReport {
       // Create the embed anyways
       message.embeds = [{
         author: {
-          name: "ScamGuard"
+          name: APP_NAME
         },
         thumbnail: {
-          url: "https://scamguard.app/assets/site-logo.png"
+          url: APP_EMBED_THUMBNAIL
         },
         color: !reportSuccess ? 15409961 : 5761827,
         title: "Report",
@@ -188,12 +186,13 @@ export class ScamGuardReport {
           message.content = "Could not post to the thread, an error occurred. Please try again.";
         }
       } else {
-        const expireUpdate: string = (!usesUserThread) ? ", expiry updated" : "";
-        message.content = `Message forwarded${expireUpdate}.\nYou may submit more messages to [this report](${response.threadLink})`;
-        if (!usesUserThread)
-          message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}`;
-
-        message.content += `.`;
+        const threadLink: string = `[the report thread](${response.threadLink})`;
+        if (usesUserThread) {
+          message.content = `Message added to ${threadLink}.\nContinuing to use this command on other messages will forward them to the thread automatically.`;
+        } else {
+          message.content = `Message forwarded, expiry updated.\nUsing this command on other messages will update ${threadLink} automatically.\n
+          This report can take more submissions until ${HelperUtils.GetTimestamp(chainTTL)}.`;
+        }
       }
     }
 

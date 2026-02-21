@@ -51,4 +51,6 @@ These can all be gotten from your Discord developer application dashboard.
 
 All other configurations can be handled by the `wrangler.toml` file.
 
+Messaging can be modified by changing the values in the `consts.ts` file.
+
 Once configured, run `npm run sync` to sync the commands with the Discord platform.
