@@ -23,6 +23,12 @@ export class ScamGuardLookup {
       return message;
     }
 
+    const canLookup = await HelperUtils.CanAccountLookup(curUser, env);
+    if (!canLookup) {
+      message.content = "You are not allowed to use this command";
+      return message;
+    }
+
     // we have to defer because we'll need to make some RPC out calls
     await ctx.defer(true);
 

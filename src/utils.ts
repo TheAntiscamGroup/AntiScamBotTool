@@ -70,6 +70,19 @@ export default class HelperUtils {
     }
     return false;
   }
+  public static async CanAccountLookup(account: string, env: Env): Promise<boolean> {
+    if (env.LOOKUP_SETTINGS.allow_all)
+      return true;
+
+    try {
+      const kvLookup = await env.CAN_REPORT.get(account);
+      if (kvLookup != null)
+        return true;
+    } catch(err) {
+      console.error(`Failed to lookup ${account} in CanAccountLookup with err ${err}`);
+    }
+    return false;
+  }
   public static GetSupportLink(env: Env): string {
     return "You are currently forbidden from using this tool. " +
     `Please [Open a Support ticket](${env.SUPPORT_THREAD}) ` +

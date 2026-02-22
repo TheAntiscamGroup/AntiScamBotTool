@@ -59,4 +59,5 @@ COMMAND_SETTINGS={log_run=true, log_errors=true, use_forbid_list=true}
 REPORT_SETTINGS={allow_all=true, report_banned=true, thread_by_user=true, message_source_lifetime="1d 6h 30m"}
 
 # slash_enabled: if /lookup is enabled. Usually disabled to prevent mistakes
-LOOKUP_SETTINGS={slash_enabled=false}
+# allow_all: if all users can lookup accounts, allow list unneeded
+LOOKUP_SETTINGS={slash_enabled=false, allow_all=true}

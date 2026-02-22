@@ -18,4 +18,5 @@ declare type ReportSettings = {
 
 declare type LookupSettings = {
   slash_enabled: boolean;
+  allow_all: boolean;
 };
