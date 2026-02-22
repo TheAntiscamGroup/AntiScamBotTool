@@ -74,16 +74,17 @@ export class ScamGuardLookup {
       banStatus = apiResponse.banned;
       // Push ban timestamp too
       if (banStatus && apiResponse.banned_on !== undefined) {
+        const banTime: number = new Date(apiResponse.banned_on!).getTime();
         // push the time the user was banned since we know it
         fields.push({
           inline: false,
           name: "Banned At",
-          value: apiResponse.banned_on!
+          value: HelperUtils.GetTimestamp(banTime)
         });
       }
       if (apiResponse.evidence_thread !== undefined) {
         reportThreadName = "Evidence Thread";
-        reportThreadLink = apiResponse.evidence_thread;
+        reportThreadLink = `https://discord.com/channels/${env.CONTROL_GUILD}/${apiResponse.evidence_thread}`;
       }
     } else {
       message.content = `${APP_NAME} encountered an error while trying to determine user status`;

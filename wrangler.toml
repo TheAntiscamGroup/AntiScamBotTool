@@ -52,12 +52,12 @@ APP_SETTINGS={redirect_to_install=true, accounts=["1152057650226401320", "117629
 # use_forbid_list: if the tool should check if an user is not allowed
 COMMAND_SETTINGS={log_run=true, log_errors=true, use_forbid_list=true}
 
-# allow_all: if all users can report, allow list unneeded
+# allow_all: if all users can report, allow list unneeded. List uses the CAN_REPORT KV
 # report_banned: if banned accounts can continue to be reported until cleanup
 # use_message_source: if reports should be based on source channel or by the reported account
 # message_source_lifetime: time of how long we should keep chain threads active. only used if use_message_source is false
 REPORT_SETTINGS={allow_all=true, report_banned=true, thread_by_user=true, message_source_lifetime="1d 6h 30m"}
 
 # slash_enabled: if /lookup is enabled. Usually disabled to prevent mistakes
-# allow_all: if all users can lookup accounts, allow list unneeded
+# allow_all: if all users can lookup accounts, allow list unneeded. List uses the CAN_REPORT KV
 LOOKUP_SETTINGS={slash_enabled=false, allow_all=true}
