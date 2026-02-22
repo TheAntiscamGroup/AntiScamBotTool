@@ -6,7 +6,6 @@ export default class HelperUtils {
     const date: Date = new Date();
     if (offsetTime != 0)
       date.setSeconds(date.getSeconds() + offsetTime);
-
     return this.FormatTime(date);
   }
   public static FormatTime(input: Date): string {
@@ -17,10 +16,7 @@ export default class HelperUtils {
   }
   // Gets the chain TTL time (in seconds)
   public static GetChainTTLTime(env: Env): number {
-    if (env.REPORT_SETTINGS.message_source_lifetime === undefined)
-      return 60;
-
-    const TTL: string = env.REPORT_SETTINGS.message_source_lifetime;
+    const TTL: string|undefined = env.REPORT_SETTINGS.message_source_lifetime;
     if (isEmpty(TTL) || TTL.length > 100)
       return 60;
 
@@ -60,31 +56,25 @@ export default class HelperUtils {
     }
     return true;
   }
-  public static async CanAccountReport(account: string, env: Env): Promise<boolean> {
-    if (env.REPORT_SETTINGS.allow_all)
-      return true;
-
+  public static async CheckAccountAllowed(account: string, env: Env): Promise<boolean> {
     try {
       const kvLookup = await env.CAN_REPORT.get(account);
       if (kvLookup != null)
         return true;
     } catch(err) {
-      console.error(`Failed to lookup ${account} in CanAccountReport with err ${err}`);
+      console.error(`Failed to lookup ${account} in CheckAccountAllowed with err ${err}`);
     }
     return false;
+  }
+  public static async CanAccountReport(account: string, env: Env): Promise<boolean> {
+    if (env.REPORT_SETTINGS.allow_all)
+      return true;
+    return await this.CheckAccountAllowed(account, env);
   }
   public static async CanAccountLookup(account: string, env: Env): Promise<boolean> {
     if (env.LOOKUP_SETTINGS.allow_all)
       return true;
-
-    try {
-      const kvLookup = await env.CAN_REPORT.get(account);
-      if (kvLookup != null)
-        return true;
-    } catch(err) {
-      console.error(`Failed to lookup ${account} in CanAccountLookup with err ${err}`);
-    }
-    return false;
+    return await this.CheckAccountAllowed(account, env);
   }
   public static GetSupportLink(env: Env): string {
     return "You are currently forbidden from using this tool. " +
