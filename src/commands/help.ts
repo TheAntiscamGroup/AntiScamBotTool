@@ -32,7 +32,7 @@ export default class LookupCommand extends SlashCommand {
       inline: false
     };
 
-    var message: MessageOptions = {
+    const message: MessageOptions = {
       ephemeral: shouldStealth,
     };
 
@@ -42,23 +42,24 @@ export default class LookupCommand extends SlashCommand {
       return message;
     }
 
-    var responseFields = [spacingField,
+    let responseFields = [];
+
+    // Check if the user can do lookups
+    if (await HelperUtils.CanAccountLookup(curUser, env)) {
+      responseFields.push(spacingField,
       {
         name: "Checking Accounts",
         value: `To check on an account:
 
           1. Click the three dots on an user's profile card (_mobile_) or right click on the user's avatar (_desktop_).\n2. Select \`Apps\`\n3. Choose \`${CommandDescription.Check}\`\n\nIf the user shows up as **Banned**, then the mutual server is not using ${APP_NAME}.`,
         inline: false,
-      }, spacingField
-    ];
-
-    var canReport: boolean = false;
+      });
+    }
 
     // Check if the user can report
     if (await HelperUtils.CanAccountReport(curUser, env)) {
       const timeoutStr: string = (env.REPORT_SETTINGS.thread_by_user as boolean) == false ? ` and it is done within \`${env.REPORT_SETTINGS.message_source_lifetime || 60}\` of the previous action.\nAn expiration time will be provided upon each successful send` : "";
-      canReport = true;
-      responseFields.push(
+      responseFields.push(spacingField,
       {
         name: "Reporting Accounts",
         value: `To report an account:
@@ -71,15 +72,14 @@ export default class LookupCommand extends SlashCommand {
 
               This action can processes message attachments, such as images, and will include them in the report for you.`,
         inline: false,
-      }, spacingField);
+      });
     }
     // Links to our policies
-    responseFields.push({
+    responseFields.push(spacingField, {
       name: "Note",
       value: `Messages shared are considered \`Scam Report evidence\` and are subject to our [Privacy Policy](${PRIVACY_LINK}).\n\nUsage of this tool means that you agree to our [Terms of Service](${TOS_LINK})`,
       inline: false
     })
-    const reportAction: string = canReport ? "report and " : "";
     message.embeds = [{
       author: {
         name: `${APP_NAME} User Tool`
@@ -89,7 +89,7 @@ export default class LookupCommand extends SlashCommand {
       },
       color: 2303786,
       title: "How to Use",
-      description: `The ${APP_NAME} User Tool allows you to ${reportAction}look up accounts via the Discord Application Integration feature with DMs.
+      description: `The ${APP_NAME} User Tool uses the Discord Application Integration to use ${APP_NAME} features in DMs.
 
         **REMEMBER**: Do not tell the target you have this tool. This tool will respond to you in messages that only you can see.`,
       fields: responseFields,
