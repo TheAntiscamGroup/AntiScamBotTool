@@ -8,7 +8,8 @@ declare type CheckAccountReturn = APICheckReturn & {
 declare type BanDetailsReturn = CheckAccountReturn & {
   banned_on?: string;
   banned_by: string;
-  evidence_thread?: string;
+  evidence_thread?: int;
+  evidence_thread_str?: string;
 };
 declare type StatsDetailsReturn = APICheckReturn & {
   count: number;

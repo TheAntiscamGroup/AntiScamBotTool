@@ -86,9 +86,9 @@ export class ScamGuardLookup {
           });
         }
       }
-      if (apiResponse.evidence_thread !== undefined) {
+      if (apiResponse.evidence_thread_str !== undefined) {
         reportThreadName = "Evidence Thread";
-        reportThreadLink = `https://discord.com/channels/${env.CONTROL_GUILD}/${apiResponse.evidence_thread}`;
+        reportThreadLink = `https://discord.com/channels/${env.CONTROL_GUILD}/${apiResponse.evidence_thread_str}`;
       }
     } else {
       message.content = `${APP_NAME} encountered an error while trying to determine user status`;
