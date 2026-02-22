@@ -59,19 +59,21 @@ export class ScamGuardLookup {
         value: `\`${lookupUser}\``,
         inline: true
       },
-      {
-        name: "Banned Status",
-        value: banStatus.toString(),
-        inline: true
-      },
     ];
-
     let reportThreadName: string = "";
     let reportThreadLink: string|null = null;
 
     // response from the API service
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
+
+      // push the current banned status
+      fields.push({
+        name: "Banned Status",
+        value: banStatus.toString(),
+        inline: true
+      });
+
       // Push ban timestamp too
       if (banStatus && apiResponse.banned_on !== undefined) {
         const bannedDate: Date = new Date(apiResponse.banned_on!);
