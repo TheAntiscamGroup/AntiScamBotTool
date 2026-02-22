@@ -27,7 +27,7 @@ To install the instance ran by TAG, you must:
 3. Open the profile card
 4. Click `+ Add App`
 
-While this app is in beta, we're holding back from a general access installation. These install steps will likely get easier over time.
+While this app is in beta, we're holding back from a general access installation.
 
 ## Custom Setup
 
