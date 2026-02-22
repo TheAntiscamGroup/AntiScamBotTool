@@ -188,7 +188,7 @@ export class ScamGuardReport {
       } else {
         const threadLink: string = `[the report thread](${response.threadLink})`;
         if (usesUserThread) {
-          message.content = `Message added to ${threadLink}.\nContinuing to use this command on other messages will forward them to the thread automatically.`;
+          message.content = `Message added to ${threadLink}.\nContinuing to use this command on other messages will forward them to the same thread automatically.`;
         } else {
           message.content = `Message forwarded, expiry updated.\nUsing this command on other messages will update ${threadLink} automatically.\n
           This report can take more submissions until ${HelperUtils.GetTimestamp(chainTTL)}.`;

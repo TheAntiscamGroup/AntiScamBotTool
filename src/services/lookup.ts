@@ -74,13 +74,15 @@ export class ScamGuardLookup {
       banStatus = apiResponse.banned;
       // Push ban timestamp too
       if (banStatus && apiResponse.banned_on !== undefined) {
-        const banTime: number = new Date(apiResponse.banned_on!).getTime();
-        // push the time the user was banned since we know it
-        fields.push({
-          inline: false,
-          name: "Banned At",
-          value: HelperUtils.GetTimestamp(banTime)
-        });
+        const bannedDate: Date = new Date(apiResponse.banned_on!);
+        if (!isNaN(bannedDate.valueOf())) {
+          // push the time the user was banned since we know it
+          fields.push({
+            inline: false,
+            name: "Banned At",
+            value: HelperUtils.FormatTime(bannedDate)
+          });
+        }
       }
       if (apiResponse.evidence_thread !== undefined) {
         reportThreadName = "Evidence Thread";

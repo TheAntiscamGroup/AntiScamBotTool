@@ -2,15 +2,18 @@ import isEmpty from 'just-is-empty';
 import parse from 'parse-duration';
 
 export default class HelperUtils {
-  public static GetTimestamp(offsetTime: number|null=null): string {
+  public static GetTimestamp(offsetTime: number=0): string {
     const date: Date = new Date();
-    if (offsetTime !== null)
+    if (offsetTime != 0)
       date.setSeconds(date.getSeconds() + offsetTime);
 
+    return this.FormatTime(date);
+  }
+  public static FormatTime(input: Date): string {
     // It appears that Discord wants the timestamp in seconds, but I'm not sure for certain.
     // Couldn't find any methodology on it.
     // Everyone just kept reporting this as the answer, which would chop off the last 3 ms characters.
-    return `<t:${date.getTime().toString().slice(0,-3)}>`;
+    return `<t:${input.getTime().toString().slice(0,-3)}>`;
   }
   // Gets the chain TTL time (in seconds)
   public static GetChainTTLTime(env: Env): number {
