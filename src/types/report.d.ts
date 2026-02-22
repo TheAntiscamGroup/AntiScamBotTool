@@ -1,14 +1,3 @@
-/* Check account */
-declare type CheckAccountReturn = {
-  valid: boolean;
-  banned: boolean;
-  thread?: string;
-};
-declare type CheckAccount = (userID: string) => Promise<CheckAccountReturn>;
-declare interface CheckAccountService extends Service {
-  checkAccount: CheckAccount;
-}
-
 /* Account reporting */
 declare type ReportObject = {
   reportedID: string;
