@@ -4,6 +4,7 @@ import { commands } from './commands';
 import ForbidAccessHelper from './commands/add-forbid';
 import AddPermissionsHelper from './commands/add-permissions';
 import SlashLookupCommand from './commands/slash-lookup';
+import { CleanThreadChain } from './services/clean';
 
 const cfServer = new CloudflareWorkerServer();
 let creator: SlashCreator;
@@ -44,9 +45,15 @@ function makeCreator(env: Record<string, any>) {
 }
 
 export default {
-  async fetch(request: any, env: Record<string, any>, ctx: ExecutionContext) {
-    if (env.APP_SETTINGS.redirect_to_install && request.method !== "POST") {
-      return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
+  async fetch(request: any, env: Env, ctx: ExecutionContext) {
+    if (request.method !== "POST") {
+      const requestLoc = new URL(request.url);
+      if (env.APP_SETTINGS.can_use_clean && requestLoc.pathname === "/clean") {
+        return Response.json(await CleanThreadChain(env, ctx));
+      }
+      if (env.APP_SETTINGS.redirect_to_install) {
+        return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
+      }
     }
 
     if (!creator)
@@ -54,35 +61,6 @@ export default {
     return cfServer.fetch(request, env, ctx);
   },
   async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
-    // Clean up the USER_TO_THREAD KV table if the user reported is banned.
-    if (env.REPORT_SETTINGS.thread_by_user) {
-      let options = { cursor: "", limit: 200 };
-      // loop forever until we're done.
-      while (true) {
-        // list all the entries in the KV table
-        const response = await env.REPORT_THREAD_CHAIN.list(options);
-        // run through all the objects in the response
-        for (const userEntry of response.keys) {
-          try {
-            // Check our API to see if that user is banned
-            const apiResponse = await (env.API_SERVICE as CheckAccountService).checkAccount(userEntry.name);
-            if (apiResponse.valid && apiResponse.banned) {
-              // They are banned, push a future ctx to delete them.
-              // This could also have been a bulk delete via the rest API but eh.
-              ctx.waitUntil(env.REPORT_THREAD_CHAIN.delete(userEntry.name));
-            }
-          } catch(err) {
-            console.error(`Encountered an error ${err} while trying to delete user ${userEntry} from the KV table`);
-            continue;
-          }
-        }
-        // loop again if we're not at the end of the KV table
-        if (response.list_complete !== true)
-          options.cursor = response.cursor;
-        else
-          break;
-      }
-      console.log("Finished processing cleanup.");
-    }
+    await CleanThreadChain(env, ctx);
   },
 };

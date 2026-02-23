@@ -49,6 +49,13 @@ These can all be gotten from your Discord developer application dashboard.
 * `SUPPORT_THREAD` - The discord https link to the support channel of the given Discord server
 * `CONTROL_GUILD`- The numeric guild ID for adding the moderation commands to
 
+### Bulk Deletion
+
+If you want to use the KV bulk deletion feature, you will need to fill out all of these values. If any are empty or missing,
+then bulk deletion will not be used during the scheduled cron task, and instead deletions will be carried out one by one.
+
+* `BULK_KV_API_TOKEN` - A CF account API Token. Token must have the `Workers KV Storage Write` flag.
+
 All other configurations can be handled by the `wrangler.toml` file.
 
 Messaging can be modified by changing the values in the `consts.ts` file.

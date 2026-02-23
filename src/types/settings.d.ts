@@ -1,5 +1,6 @@
 declare type ApplicationSettings = {
   redirect_to_install: boolean;
+  can_use_clean: boolean;
   accounts?: string[];
 };
 

@@ -43,9 +43,14 @@ mode = "smart"
 crons = ["0 3 * * 2"]
 
 [vars]
+# Your CF Account ID, found here: https://developers.cloudflare.com/fundamentals/account/find-account-and-zone-ids/
+CF_ACCOUNT_ID="c56f01b66d3ce2234fb0012a345aa1c6"
+# The binding for REPORT_THREAD_CHAIN above. Used for bulk deletion of old records
+THREAD_CHAIN_KV_ID="6acf800bb3fa47f88eb9d296a0808668"
+
 # redirect_to_install: if the tool should redirect to install on invalid pathing
 # accounts: other accounts that are related to this app
-APP_SETTINGS={redirect_to_install=true, accounts=["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557"]}
+APP_SETTINGS={redirect_to_install=true, can_use_clean=true, accounts=["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557"]}
 
 # log_run: should commands log their execution
 # log_errors: should we log error messages
