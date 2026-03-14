@@ -8,9 +8,9 @@
     "deploy": "wrangler deploy"
   },
   "devDependencies": {
-    "@types/node": "^24.10.13",
-    "slash-create": "^6.8.0",
-    "wrangler": "^4.67.0"
+    "@types/node": "^24.12.0",
+    "slash-create": "^6.8.1",
+    "wrangler": "^4.73.0"
   },
   "dependencies": {
     "just-is-empty": "^3.4.1",
@@ -18,7 +18,10 @@
   },
   "overrides": {
     "slash-create": {
-      "undici": "~6.23.0"
+      "undici": "~7.24.0"
+    },
+    "miniflare": {
+      "undici": "~7.24.0"
     }
   },
   "engines": {
