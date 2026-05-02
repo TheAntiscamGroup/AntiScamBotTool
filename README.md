@@ -12,11 +12,11 @@ This Discord interaction contains:
 * `/help` - prints out a very nice help screen
 * User Application Interaction - for looking up the user while looking at their profile
 * Message Application Interaction - for forwarding/reporting scammers easily as well as looking them up
-* Helper functions for managing the tool that can be installed for a guild.
+* Helper functions for managing the tool/reports that can be installed to a guild.
 
 The end goal is to make everything work easier for users.
 
-You can forward messages directly to ScamGuard reporting + look up accounts all within the Discord UI.
+You can forward messages directly to ScamGuard reporting + look up accounts all within the Discord UI regardless of client.
 
 ## Install
 
@@ -24,10 +24,8 @@ To install the instance ran by TAG, you must:
 
 1. [Join the server](https://scamguard.app/discord).
 2. Find the `ScamGuard User Tool` account
-3. Open the profile card
+3. Open the profile card for the above account
 4. Click `+ Add App`
-
-While this app is in beta, we're holding back from a general access installation.
 
 ## Custom Setup
 

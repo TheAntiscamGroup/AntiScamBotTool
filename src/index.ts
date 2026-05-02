@@ -16,7 +16,7 @@ function makeCreator(env: Record<string, any>) {
     publicKey: env.DISCORD_PUBLIC_KEY,
     token: env.DISCORD_BOT_TOKEN
   });
-  // base commands that can be used globally
+  // register base commands that can be used globally
   creator.withServer(cfServer).registerCommands(commands, false);
 
   // check to see if we should register the /lookup command
@@ -24,7 +24,7 @@ function makeCreator(env: Record<string, any>) {
     creator.registerCommand(new SlashLookupCommand(creator));
   }
 
-  // explicit guild only commands
+  // explicit register guild only commands if the control guild setting exists
   const controlGuild: string = env.CONTROL_GUILD;
   if (!isEmpty(controlGuild)) {
     creator.registerCommand(new AddPermissionsHelper(creator, controlGuild));
@@ -32,6 +32,7 @@ function makeCreator(env: Record<string, any>) {
     creator.registerCommand(new ParseIDHelper(creator, controlGuild));
   }
 
+  // if we should log any errors
   if (env.COMMAND_SETTINGS.log_errors) {
     creator.on('error', (error) => console.error(error.stack || error.toString()));
     creator.on('commandError', (command, error) =>
@@ -39,6 +40,7 @@ function makeCreator(env: Record<string, any>) {
     );
   }
 
+  // If we should log all command executions (ideally true only in development)
   if (env.COMMAND_SETTINGS.log_run) {
     creator.on('commandRun', (command, _, ctx) =>
       console.info(`${ctx.user.username} (${ctx.user.id}) ran command ${command.commandName}`)
@@ -48,20 +50,25 @@ function makeCreator(env: Record<string, any>) {
 
 export default {
   async fetch(request: any, env: Env, ctx: ExecutionContext) {
+    // handle redirects if this wasn't a request from Discord
     if (request.method !== "POST") {
       const requestLoc = new URL(request.url);
+      // force run our scheduled command
       if (env.APP_SETTINGS.can_use_clean && requestLoc.pathname === "/clean") {
         return Response.json(await CleanThreadChain(env, ctx));
       }
+      // otherwise redirect to the install URL
       if (env.APP_SETTINGS.redirect_to_install) {
         return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
       }
     }
 
+    // inject our discord commands, if we don't have them (subcommands)
     if (!creator)
       makeCreator(env);
     return cfServer.fetch(request, env, ctx);
   },
+  // handling cleanup operations
   async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
     await CleanThreadChain(env, ctx);
   },
