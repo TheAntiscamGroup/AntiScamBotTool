@@ -2,7 +2,7 @@ import {
   ApplicationIntegrationType, CommandContext, EmbedField,
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator
 } from "slash-create/web";
-import { APP_EMBED_THUMBNAIL, APP_NAME, CommandDescription, PRIVACY_LINK, TOS_LINK } from "../consts";
+import { APP_EMBED_THUMBNAIL, APP_NAME, CommandDescription, EmbedColors, PRIVACY_LINK, TOS_LINK } from "../consts";
 import HelperUtils from "../utils";
 
 export default class LookupCommand extends SlashCommand {
@@ -87,7 +87,7 @@ export default class LookupCommand extends SlashCommand {
       thumbnail: {
         url: APP_EMBED_THUMBNAIL
       },
-      color: 2303786,
+      color: EmbedColors.default,
       title: "How to Use",
       description: `The ${APP_NAME} User Tool uses the Discord Application Integration to use ${APP_NAME} features in DMs.
 

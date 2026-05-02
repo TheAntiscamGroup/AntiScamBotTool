@@ -1,5 +1,5 @@
 import { CommandContext, EmbedField, MessageOptions } from "slash-create/web";
-import { APP_EMBED_THUMBNAIL, APP_NAME } from "../consts";
+import { APP_EMBED_THUMBNAIL, APP_NAME, EmbedColors } from "../consts";
 import HelperUtils from "../utils";
 
 export class ScamGuardLookup {
@@ -123,7 +123,7 @@ export class ScamGuardLookup {
         thumbnail: {
           url: APP_EMBED_THUMBNAIL
         },
-        color: banStatus ? 15409961 : 5761827,
+        color: banStatus ? EmbedColors.red : EmbedColors.green,
         title: "Lookup Result",
         fields: fields
       }]

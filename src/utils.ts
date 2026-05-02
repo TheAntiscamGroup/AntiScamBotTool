@@ -27,16 +27,25 @@ export default class HelperUtils {
 
     return TTLTime;
   }
-  public static IsAccountValid(env: Env, account: string): boolean {
-    if (account == null || account.length < 17 || account.length > 20)
+  // prevent accounts from being used/reported (mostly just other ScamGuard bots)
+  public static IsAccountProtected(env: Env, account: string): boolean {
+    if (account == null)
       return false;
 
     // check to see account is valid and has values
     if (!isEmpty(env.APP_SETTINGS.accounts)) {
       // prevent the bot accounts from being reported.
       if ((env.APP_SETTINGS as ApplicationSettings).accounts!.includes(account))
-        return false;
+        return true;
     }
+    return false;
+  }
+  public static IsAccountValid(env: Env, account: string): boolean {
+    if (account == null || account.length < 17 || account.length > 20)
+      return false;
+
+    if (this.IsAccountProtected(env, account))
+      return false;
 
     // check if it's all numbers
     return /^\d+$/.test(account);

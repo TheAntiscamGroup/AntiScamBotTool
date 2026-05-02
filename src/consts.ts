@@ -15,3 +15,13 @@ export const CommandDescription = {
   Help: `Get help using the ${APP_NAME} User Tool`,
   ParseID: "MOD: Pulls IDs from report"
 };
+
+// colors for response embeds
+export const EmbedColors = {
+  /* user banned or error */
+  red: 15409961,
+  /* user not banned or success */
+  green: 5761827,
+  /* default app color */
+  default: 2303786
+};

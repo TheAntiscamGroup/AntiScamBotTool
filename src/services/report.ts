@@ -1,6 +1,6 @@
 import isEmpty from "just-is-empty";
 import { CommandContext, MessageOptions } from "slash-create/web";
-import { APP_EMBED_THUMBNAIL, APP_NAME } from "../consts";
+import { APP_EMBED_THUMBNAIL, APP_NAME, EmbedColors } from "../consts";
 import HelperUtils from "../utils";
 
 const EmptyReportResponse: ReportResponse = {
@@ -144,7 +144,7 @@ export class ScamGuardReport {
         thumbnail: {
           url: APP_EMBED_THUMBNAIL
         },
-        color: !reportSuccess ? 15409961 : 5761827,
+        color: !reportSuccess ? EmbedColors.red : EmbedColors.green,
         title: "Report",
         fields: [
           {

@@ -4,6 +4,7 @@ import {
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator
 } from "slash-create/web";
 import { CommandDescription } from "../consts";
+import HelperUtils from "../utils";
 
 export default class ParseIDHelper extends SlashCommand {
   constructor(creator: SlashCreator, guildID: string) {
@@ -44,7 +45,9 @@ export default class ParseIDHelper extends SlashCommand {
       return responseMsg;
     }
     allIDMatch!.forEach((match) => {
-      outputText += `\`\`\`${match}\`\`\`\n`;
+      // don't log any SG bots in here
+      if (!HelperUtils.IsAccountProtected(env, match))
+        outputText += `\`\`\`${match}\`\`\`\n`;
     });
     responseMsg.content = outputText;
     return responseMsg;
