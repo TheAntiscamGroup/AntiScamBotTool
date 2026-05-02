@@ -3,6 +3,7 @@ import { CloudflareWorkerServer, SlashCreator } from 'slash-create/web';
 import { commands } from './commands';
 import ForbidAccessHelper from './commands/add-forbid';
 import AddPermissionsHelper from './commands/add-permissions';
+import ParseIDHelper from './commands/message-parse-id';
 import SlashLookupCommand from './commands/slash-lookup';
 import { CleanThreadChain } from './services/clean';
 
@@ -28,6 +29,7 @@ function makeCreator(env: Record<string, any>) {
   if (!isEmpty(controlGuild)) {
     creator.registerCommand(new AddPermissionsHelper(creator, controlGuild));
     creator.registerCommand(new ForbidAccessHelper(creator, controlGuild));
+    creator.registerCommand(new ParseIDHelper(creator, controlGuild));
   }
 
   if (env.COMMAND_SETTINGS.log_errors) {

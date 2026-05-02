@@ -12,5 +12,6 @@ export const CommandDescription = {
   Report: `Report Message to ${APP_NAME}`,
   Forbid: "MOD: Forbid an user from using the tool",
   Add: "MOD: Add to Tool Reporter",
-  Help: `Get help using the ${APP_NAME} User Tool`
+  Help: `Get help using the ${APP_NAME} User Tool`,
+  ParseID: "MOD: Pulls IDs from report"
 };
