@@ -13,7 +13,7 @@ export const CommandDescription = {
   Forbid: "MOD: Forbid an user from using the tool",
   Add: "MOD: Add to Tool Reporter",
   Help: `Get help using the ${APP_NAME} User Tool`,
-  ParseID: "MOD: Pulls IDs from report"
+  ParseID: "MOD: Pull IDs from report"
 };
 
 // colors for response embeds

@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "just-is-empty": "^3.4.1",
+    "just-unique": "^4.2.0",
     "parse-duration": "^2.1.6"
   },
   "overrides": {

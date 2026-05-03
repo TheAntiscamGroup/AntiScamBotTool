@@ -1,6 +1,8 @@
 import isEmpty from "just-is-empty";
+import unique from "just-unique";
 import {
-  ApplicationCommandType, ApplicationIntegrationType, CommandContext,
+  ApplicationCommandType, ApplicationIntegrationType,
+  CommandContext,
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator
 } from "slash-create/web";
 import { CommandDescription } from "../consts";
@@ -15,6 +17,7 @@ export default class ParseIDHelper extends SlashCommand {
       type: ApplicationCommandType.MESSAGE,
       name: CommandDescription.ParseID,
       forcePermissions: true,
+      deferEphemeral: true,
       requiredPermissions: ['VIEW_AUDIT_LOG']
     });
   }
@@ -32,19 +35,31 @@ export default class ParseIDHelper extends SlashCommand {
 
     const msg = ctx.targetMessage;
     if (msg === undefined || msg === null) {
-      responseMsg.content = "Could not get the target message, please try again later";
+      responseMsg.content = "Could not get the target message, please try again later.";
       return responseMsg;
     }
-    await ctx.defer();
 
-    let outputText = "Matched IDs:\n";
-    // attempt to find discord user ids
-    const allIDMatch = msg.content.match(/(\d{17,20})/g);
-    if (isEmpty(allIDMatch)) {
-      responseMsg.content = "There were no matched ids in the given message";
+    // ScamGuard apps already format usernames properly.
+    if (HelperUtils.IsAccountProtected(env, msg.author.id)) {
+      responseMsg.content = "This command cannot be used on this sender";
       return responseMsg;
     }
-    allIDMatch!.forEach((match) => {
+
+    await ctx.defer(true);
+
+    const discordIDRegex = /(\d{17,20})/g;
+    // attempt to find discord user ids
+    const contentIDs: string[] = msg.content.match(discordIDRegex) || [];
+    const titleIDs: string[] = ctx.channel.name?.match(discordIDRegex) || [];
+    const checkIDs = unique(titleIDs.concat(contentIDs), false, true);
+    if (isEmpty(checkIDs)) {
+      responseMsg.content = "There were no ids in the given message...";
+      return responseMsg;
+    }
+
+    // format all of our findings
+    let outputText = "Matched IDs:\n";
+    checkIDs!.forEach((match) => {
       // don't log any SG bots in here
       if (!HelperUtils.IsAccountProtected(env, match))
         outputText += `* \`${match}\`\n`;
