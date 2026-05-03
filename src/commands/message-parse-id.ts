@@ -47,7 +47,7 @@ export default class ParseIDHelper extends SlashCommand {
     allIDMatch!.forEach((match) => {
       // don't log any SG bots in here
       if (!HelperUtils.IsAccountProtected(env, match))
-        outputText += `\`${match}\`\n`;
+        outputText += `* \`${match}\`\n`;
     });
     responseMsg.content = outputText;
     return responseMsg;
