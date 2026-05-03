@@ -86,7 +86,7 @@ export class ScamGuardLookup {
           });
         }
       }
-      if (apiResponse.evidence_thread_str !== undefined) {
+      if (apiResponse.evidence_thread_str !== undefined && apiResponse.evidence_thread_str !== null) {
         reportThreadName = "Evidence Thread";
         reportThreadLink = `https://discord.com/channels/${env.CONTROL_GUILD}/${apiResponse.evidence_thread_str}`;
       }
