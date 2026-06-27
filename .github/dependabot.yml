@@ -10,6 +10,8 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "weekly"
+    registries:
+      - npm-registry
     cooldown:
       default-days: 7
       semver-major-days: 30
