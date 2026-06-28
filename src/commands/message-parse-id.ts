@@ -51,7 +51,7 @@ export default class ParseIDHelper extends SlashCommand {
     // attempt to find discord user ids
     const contentIDs: string[] = msg.content.match(discordIDRegex) || [];
     const titleIDs: string[] = ctx.channel.name?.match(discordIDRegex) || [];
-    const checkIDs = unique(titleIDs.concat(contentIDs), false, true);
+    const checkIDs: string[] = unique(titleIDs.concat(contentIDs), false, true);
     if (isEmpty(checkIDs)) {
       responseMsg.content = "There were no ids in the given message...";
       return responseMsg;

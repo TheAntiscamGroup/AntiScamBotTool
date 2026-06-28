@@ -1,6 +1,6 @@
 version: 2
 registries:
-  npm-registry:
+  npm:
     type: "npm-registry"
     url: "https://registry.npmjs.org"
     token: ${{secrets.GH_DUMMY}}
@@ -11,7 +11,7 @@ updates:
     schedule:
       interval: "weekly"
     registries:
-      - npm-registry
+      - npm
     cooldown:
       default-days: 7
       semver-major-days: 30
