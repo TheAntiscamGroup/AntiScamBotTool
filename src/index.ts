@@ -1,9 +1,10 @@
 import isEmpty from 'just-is-empty';
 import { CloudflareWorkerServer, SlashCreator } from 'slash-create/web';
 import { commands } from './commands';
-import ForbidAccessHelper from './commands/add-forbid';
-import AddPermissionsHelper from './commands/add-permissions';
-import ParseIDHelper from './commands/message-parse-id';
+import ForbidAccessHelperCommand from './commands/add-forbid';
+import AddPermissionsHelperCommand from './commands/add-permissions';
+import ParseIDHelperCommand from './commands/message-parse-id';
+import MessageReportCommand from './commands/message-report';
 import SlashLookupCommand from './commands/slash-lookup';
 import { CleanThreadChain } from './services/clean';
 
@@ -24,13 +25,17 @@ function makeCreator(env: Record<string, any>) {
     creator.registerCommand(new SlashLookupCommand(creator));
   }
 
-  // explicit register guild only commands if the control guild setting exists
   const controlGuild: string = env.CONTROL_GUILD;
-  if (!isEmpty(controlGuild)) {
-    creator.registerCommand(new AddPermissionsHelper(creator, controlGuild));
-    creator.registerCommand(new ForbidAccessHelper(creator, controlGuild));
-    creator.registerCommand(new ParseIDHelper(creator, controlGuild));
+  const hasControlGuild: boolean = !isEmpty(controlGuild);
+  // explicit register guild only commands if the control guild setting exists
+  if (hasControlGuild) {
+    creator.registerCommand(new AddPermissionsHelperCommand(creator, controlGuild));
+    creator.registerCommand(new ForbidAccessHelperCommand(creator, controlGuild));
+    creator.registerCommand(new ParseIDHelperCommand(creator, controlGuild));
   }
+
+  const canReportInServers: boolean = (env.REPORT_SETTINGS.can_report_in_servers && hasControlGuild);
+  creator.registerCommand(new MessageReportCommand(creator, canReportInServers));
 
   // if we should log any errors
   if (env.COMMAND_SETTINGS.log_errors) {

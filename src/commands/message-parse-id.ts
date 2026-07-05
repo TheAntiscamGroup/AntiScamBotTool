@@ -8,7 +8,7 @@ import {
 import { CommandDescription } from "../consts";
 import HelperUtils from "../utils";
 
-export default class ParseIDHelper extends SlashCommand {
+export default class ParseIDHelperCommand extends SlashCommand {
   constructor(creator: SlashCreator, guildID: string) {
     super(creator, {
       contexts: [InteractionContextType.GUILD],

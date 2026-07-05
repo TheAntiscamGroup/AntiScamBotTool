@@ -6,7 +6,7 @@ import {
 import { CommandDescription } from "../consts";
 import HelperUtils from "../utils";
 
-export default class ForbidAccessHelper extends SlashCommand {
+export default class ForbidAccessHelperCommand extends SlashCommand {
   constructor(creator: SlashCreator, guildID: string) {
     super(creator, {
       contexts: [InteractionContextType.GUILD],

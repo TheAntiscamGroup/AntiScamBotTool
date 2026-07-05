@@ -6,10 +6,15 @@ import { CommandDescription } from "../consts";
 import { ScamGuardReport } from "../services/report";
 import HelperUtils from "../utils";
 
-export default class MessageReport extends SlashCommand {
-  constructor(creator: SlashCreator) {
+export default class MessageReportCommand extends SlashCommand {
+  constructor(creator: SlashCreator, canUseInServers: boolean) {
+    // Dynamically allow commands to be used based on settings
+    let allowedContexts: InteractionContextType[] = [InteractionContextType.PRIVATE_CHANNEL];
+    if (canUseInServers)
+      allowedContexts.push(InteractionContextType.GUILD);
+
     super(creator, {
-      contexts: [InteractionContextType.PRIVATE_CHANNEL],
+      contexts: allowedContexts,
       integrationTypes: [ApplicationIntegrationType.USER_INSTALL],
       type: ApplicationCommandType.MESSAGE,
       name: CommandDescription.Report,
@@ -30,6 +35,17 @@ export default class MessageReport extends SlashCommand {
 
     if (await HelperUtils.IsAccountForbidden(ctx.user.id, env)) {
       errMsg.content = HelperUtils.GetSupportLink(env);
+      return errMsg;
+    }
+
+    if (env.REPORT_SETTINGS.can_report_in_servers) {
+      // is this guild not allowed to be reported?
+      if (ctx.guildID === env.CONTROL_GUILD) {
+        errMsg.content = "This command is not allowed to be ran in this server.";
+        return errMsg;
+      }
+    } else if (ctx.guildID !== undefined) {
+      errMsg.content = "This command cannot be ran in servers";
       return errMsg;
     }
 

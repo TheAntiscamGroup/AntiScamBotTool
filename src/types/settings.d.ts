@@ -14,6 +14,7 @@ declare type ReportSettings = {
   allow_all: boolean;
   report_banned: boolean;
   thread_by_user: boolean;
+  can_report_in_servers: boolean;
   message_source_lifetime?: string;
 };
 
