@@ -61,7 +61,8 @@ export class ScamGuardReport {
       report.reportedUserName = authorName;
       report.reportTitle = authorName;
       // formatting for the message evidence
-      report.messageEvidence = `${authorName}: ${msg.content}`;
+      if (!isEmpty(msg.content))
+        report.messageEvidence = `${authorName}: ${msg.content}`;
       // grab any attachments we might have as well
       if (msg.attachments.length > 0) {
         report.evidence = [];
