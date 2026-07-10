@@ -28,7 +28,7 @@ function makeCreator(env: Record<string, any>) {
   const controlGuild: string = env.CONTROL_GUILD;
   const hasControlGuild: boolean = !isEmpty(controlGuild);
   // explicit register guild only commands if the control guild setting exists
-  if (hasControlGuild) {
+  if (hasControlGuild && env.COMMAND_SETTINGS.install_mod_commands) {
     creator.registerCommand(new AddPermissionsHelperCommand(creator, controlGuild));
     creator.registerCommand(new ForbidAccessHelperCommand(creator, controlGuild));
     creator.registerCommand(new ParseIDHelperCommand(creator, controlGuild));

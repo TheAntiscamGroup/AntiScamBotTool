@@ -30,7 +30,6 @@ head_sampling_rate = 1
 [observability.traces]
 enabled = true
 head_sampling_rate = 0.5
-persist = true
 
 # flags required to run wrangler in linux
 [dev]
@@ -55,7 +54,8 @@ APP_SETTINGS={redirect_to_install=true, can_use_clean=true, accounts=["115205765
 # log_run: should commands log their execution
 # log_errors: should we log error messages
 # use_forbid_list: if the tool should check if an user is not allowed
-COMMAND_SETTINGS={log_run=false, log_errors=true, use_forbid_list=true}
+# install_mod_commands: if the tool should also register commands that start with "MOD:", they will be only usable by those that have access to the audit log
+COMMAND_SETTINGS={log_run=false, log_errors=true, use_forbid_list=true, install_mod_commands=true}
 
 # allow_all: if all users can report, allow list unneeded. List uses the CAN_REPORT KV
 # can_report_in_servers: if messages can be reported from servers. The CONTROL_GUILD setting MUST BE SET to use this as true

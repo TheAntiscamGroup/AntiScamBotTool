@@ -8,6 +8,7 @@ declare type CommandSettings = {
   log_run: boolean;
   log_errors: boolean;
   use_forbid_list: boolean;
+  install_mod_commands: boolean;
 };
 
 declare type ReportSettings = {

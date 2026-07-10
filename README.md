@@ -54,8 +54,10 @@ then bulk deletion will not be used during the scheduled cron task, and instead 
 
 * `BULK_KV_API_TOKEN` - A CF account API Token. Token must have the `Workers KV Storage Write` flag.
 
+### Other Settings
+
 All other configurations can be handled by the `wrangler.toml` file.
 
-Messaging can be modified by changing the values in the `consts.ts` file.
+Specific messaging can be modified by changing the values in the `consts.ts` file.
 
 Once configured, run `npm run sync` to sync the commands with the Discord platform.
