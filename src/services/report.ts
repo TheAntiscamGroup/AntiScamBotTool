@@ -63,6 +63,10 @@ export class ScamGuardReport {
       // formatting for the message evidence
       if (!isEmpty(msg.content))
         report.messageEvidence = `${authorName}: ${msg.content}`;
+      else if (!isEmpty(msg.stickerItems)) {
+        const firstSticker = msg.stickerItems[0];
+        report.messageEvidence = `${authorName}: <sticker "${firstSticker.name}" (${firstSticker.id})>`;
+      }
       // grab any attachments we might have as well
       if (msg.attachments.length > 0) {
         report.evidence = [];
