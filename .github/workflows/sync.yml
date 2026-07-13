@@ -1,0 +1,55 @@
+# Syncs discord commands
+name: Sync Discord Commands
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "src/(commands|consts|config).ts"
+
+concurrency:
+  group: "sync"
+  cancel-in-progress: true
+
+jobs:
+  command_sync:
+    name: Sync Discord Commands
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    environment:
+      name: discord
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7.0.0
+      - name: Setup Node
+        uses: actions/setup-node@v6
+        with:
+          cache: "npm"
+          node-version-file: ".node-version"
+          package-manager-cache: true
+        # grab this for the runtime
+      - name: Install Node Packages
+        run: npm install
+        # Install slash-up
+      - name: Install Slash Up
+        run: npm install slash-up@latest
+      - name: Sync Commands
+        if: success()
+        run: npm run sync
+        with:
+          DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+          DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
+  clean_deploys:
+    runs-on: ubuntu-latest
+    name: Clean Discord Sync Deploys
+    needs: ["command_sync"]
+    permissions:
+      deployments: write
+    steps:
+      - name: Cleanup Previous Deploys
+        uses: strumwolf/delete-deployment-environment@035f6d27c8b8951729f4d71b2d3d6a7975139476
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          environment: discord
+          onlyRemoveDeployments: true
