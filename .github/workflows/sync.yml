@@ -37,7 +37,7 @@ jobs:
       - name: Sync Commands
         if: success()
         run: npm run sync
-        with:
+        env:
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
   clean_deploys:
