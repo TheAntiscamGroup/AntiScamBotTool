@@ -1,4 +1,5 @@
 import { CommandContext, EmbedField, MessageOptions } from "slash-create/web";
+import { config } from "../config";
 import { APP_EMBED_THUMBNAIL, APP_NAME, EmbedColors } from "../consts";
 import HelperUtils from "../utils";
 
@@ -11,7 +12,7 @@ export class ScamGuardLookup {
     };
 
     // check if the given input is a correct number
-    if (!HelperUtils.IsAccountValid(env, lookupUser)) {
+    if (!HelperUtils.IsAccountValid(lookupUser)) {
       console.error(`${curUser} sent an input of ${lookupUser} which is invalid`);
       message.content = "The given input is not a valid Discord account";
       return message;
@@ -88,7 +89,7 @@ export class ScamGuardLookup {
       }
       if (apiResponse.evidence_thread_str !== undefined && apiResponse.evidence_thread_str !== null) {
         reportThreadName = "Evidence Thread";
-        reportThreadLink = `https://discord.com/channels/${env.CONTROL_GUILD}/${apiResponse.evidence_thread_str}`;
+        reportThreadLink = `https://discord.com/channels/${config.CONTROL_GUILD}/${apiResponse.evidence_thread_str}`;
       }
     } else {
       message.content = `${APP_NAME} encountered an error while trying to determine user status`;
@@ -96,11 +97,11 @@ export class ScamGuardLookup {
     }
 
     // Check if we have a reported thread on them
-    if (reportThreadLink === null && env.REPORT_SETTINGS.thread_by_user) {
+    if (reportThreadLink === null && config.REPORT_SETTINGS.thread_by_user) {
       const reportThreadId: string|null = await env.REPORT_THREAD_CHAIN.get(lookupUser);
       if (reportThreadId !== null) {
         reportThreadName = "Current Report Thread";
-        reportThreadLink = `https://discord.com/channels/${env.CONTROL_GUILD}/${reportThreadId}`;
+        reportThreadLink = `https://discord.com/channels/${config.CONTROL_GUILD}/${reportThreadId}`;
       }
     }
 

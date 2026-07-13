@@ -5,12 +5,13 @@ import {
 import { CommandDescription } from "../consts";
 import { ScamGuardReport } from "../services/report";
 import HelperUtils from "../utils";
+import { config } from "../config";
 
 export default class MessageReportCommand extends SlashCommand {
-  constructor(creator: SlashCreator, canUseInServers: boolean) {
+  constructor(creator: SlashCreator) {
     // Dynamically allow commands to be used based on settings
     let allowedContexts: InteractionContextType[] = [InteractionContextType.PRIVATE_CHANNEL];
-    if (canUseInServers)
+    if (config.REPORT_SETTINGS.can_report_in_servers && config.CONTROL_GUILD !== undefined)
       allowedContexts.push(InteractionContextType.GUILD);
 
     super(creator, {
@@ -38,9 +39,9 @@ export default class MessageReportCommand extends SlashCommand {
       return errMsg;
     }
 
-    if (env.REPORT_SETTINGS.can_report_in_servers) {
+    if (config.REPORT_SETTINGS.can_report_in_servers) {
       // is this guild not allowed to be reported?
-      if (ctx.guildID === env.CONTROL_GUILD) {
+      if (ctx.guildID === config.CONTROL_GUILD) {
         errMsg.content = "This command is not allowed to be ran in this server.";
         return errMsg;
       }

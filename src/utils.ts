@@ -1,5 +1,6 @@
 import isEmpty from 'just-is-empty';
 import parse from 'parse-duration';
+import { config } from './config';
 
 export default class HelperUtils {
   public static GetTimestamp(offsetTime: number=0): string {
@@ -8,6 +9,9 @@ export default class HelperUtils {
       date.setSeconds(date.getSeconds() + offsetTime);
     return this.FormatTime(date);
   }
+  public static CanUseModCommand(): boolean {
+    return config.CONTROL_GUILD !== undefined && config.COMMAND_SETTINGS.install_mod_commands;
+  }
   public static FormatTime(input: Date): string {
     // It appears that Discord wants the timestamp in seconds, but I'm not sure for certain.
     // Couldn't find any methodology on it.
@@ -15,9 +19,9 @@ export default class HelperUtils {
     return `<t:${input.getTime().toString().slice(0,-3)}>`;
   }
   // Gets the chain TTL time (in seconds)
-  public static GetChainTTLTime(env: Env): number {
-    const TTL: string|undefined = env.REPORT_SETTINGS.message_source_lifetime;
-    if (isEmpty(TTL) || TTL.length > 100)
+  public static GetChainTTLTime(): number {
+    const TTL: string|undefined = config.REPORT_SETTINGS.message_source_lifetime;
+    if (isEmpty(TTL) || TTL!.length > 100)
       return 60;
 
     const TTLTime: number = Math.floor(parse(TTL, 's') ?? 60);
@@ -28,23 +32,23 @@ export default class HelperUtils {
     return TTLTime;
   }
   // prevent accounts from being used/reported (mostly just other ScamGuard bots)
-  public static IsAccountProtected(env: Env, account: string): boolean {
+  public static IsAccountProtected(account: string): boolean {
     if (account == null)
       return false;
 
     // check to see account is valid and has values
-    if (!isEmpty(env.APP_SETTINGS.accounts)) {
+    if (!isEmpty(config.APP_SETTINGS.accounts)) {
       // prevent the bot accounts from being reported.
-      if ((env.APP_SETTINGS as ApplicationSettings).accounts!.includes(account))
+      if (config.APP_SETTINGS.accounts!.includes(account))
         return true;
     }
     return false;
   }
-  public static IsAccountValid(env: Env, account: string): boolean {
+  public static IsAccountValid(account: string): boolean {
     if (account == null || account.length < 17 || account.length > 20)
       return false;
 
-    if (this.IsAccountProtected(env, account))
+    if (this.IsAccountProtected(account))
       return false;
 
     // check if it's all numbers
@@ -53,7 +57,7 @@ export default class HelperUtils {
   public static async IsAccountForbidden(account: string, env: Env): Promise<boolean> {
     // Can people be blocked from using this tool?
     // This function checks access.
-    if (!env.COMMAND_SETTINGS.use_forbid_list)
+    if (!config.COMMAND_SETTINGS.use_forbid_list)
       return false;
 
     try {
@@ -76,12 +80,12 @@ export default class HelperUtils {
     return false;
   }
   public static async CanAccountReport(account: string, env: Env): Promise<boolean> {
-    if (env.REPORT_SETTINGS.allow_all)
+    if (config.REPORT_SETTINGS.allow_all)
       return true;
     return await this.CheckAccountAllowed(account, env);
   }
   public static async CanAccountLookup(account: string, env: Env): Promise<boolean> {
-    if (env.LOOKUP_SETTINGS.allow_all)
+    if (config.LOOKUP_SETTINGS.allow_all)
       return true;
     return await this.CheckAccountAllowed(account, env);
   }

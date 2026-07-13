@@ -1,11 +1,6 @@
-import isEmpty from 'just-is-empty';
 import { CloudflareWorkerServer, SlashCreator } from 'slash-create/web';
 import { commands } from './commands';
-import ForbidAccessHelperCommand from './commands/add-forbid';
-import AddPermissionsHelperCommand from './commands/add-permissions';
-import ParseIDHelperCommand from './commands/message-parse-id';
-import MessageReportCommand from './commands/message-report';
-import SlashLookupCommand from './commands/slash-lookup';
+import { config } from './config';
 import { CleanThreadChain } from './services/clean';
 
 const cfServer = new CloudflareWorkerServer();
@@ -18,27 +13,10 @@ function makeCreator(env: Record<string, any>) {
     token: env.DISCORD_BOT_TOKEN
   });
   // register base commands that can be used globally
-  creator.withServer(cfServer).registerCommands(commands, false);
-
-  // check to see if we should register the /lookup command
-  if (env.LOOKUP_SETTINGS.slash_enabled) {
-    creator.registerCommand(new SlashLookupCommand(creator));
-  }
-
-  const controlGuild: string = env.CONTROL_GUILD;
-  const hasControlGuild: boolean = !isEmpty(controlGuild);
-  // explicit register guild only commands if the control guild setting exists
-  if (hasControlGuild && env.COMMAND_SETTINGS.install_mod_commands) {
-    creator.registerCommand(new AddPermissionsHelperCommand(creator, controlGuild));
-    creator.registerCommand(new ForbidAccessHelperCommand(creator, controlGuild));
-    creator.registerCommand(new ParseIDHelperCommand(creator, controlGuild));
-  }
-
-  const canReportInServers: boolean = (env.REPORT_SETTINGS.can_report_in_servers && hasControlGuild);
-  creator.registerCommand(new MessageReportCommand(creator, canReportInServers));
+  creator.withServer(cfServer).registerCommands(commands, true);
 
   // if we should log any errors
-  if (env.COMMAND_SETTINGS.log_errors) {
+  if (config.COMMAND_SETTINGS.log_errors) {
     creator.on('error', (error) => console.error(error.stack || error.toString()));
     creator.on('commandError', (command, error) =>
       console.error(`Command ${command.commandName} errored:`, error.stack || error.toString())
@@ -46,7 +24,7 @@ function makeCreator(env: Record<string, any>) {
   }
 
   // If we should log all command executions (ideally true only in development)
-  if (env.COMMAND_SETTINGS.log_run) {
+  if (config.COMMAND_SETTINGS.log_run) {
     creator.on('commandRun', (command, _, ctx) =>
       console.info(`${ctx.user.username} (${ctx.user.id}) ran command ${command.commandName}`)
     );
@@ -59,11 +37,11 @@ export default {
     if (request.method !== "POST") {
       const requestLoc = new URL(request.url);
       // force run our scheduled command
-      if (env.APP_SETTINGS.can_use_clean && requestLoc.pathname === "/clean") {
+      if (config.APP_SETTINGS.can_use_clean && requestLoc.pathname === "/clean") {
         return Response.json(await CleanThreadChain(env, ctx));
       }
       // otherwise redirect to the install URL
-      if (env.APP_SETTINGS.redirect_to_install) {
+      if (config.APP_SETTINGS.redirect_to_install) {
         return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
       }
     }

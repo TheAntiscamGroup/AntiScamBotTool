@@ -1,5 +1,6 @@
 import isEmpty from "just-is-empty";
 import { CommandContext, MessageOptions } from "slash-create/web";
+import { config } from "../config";
 import { APP_EMBED_THUMBNAIL, APP_NAME, EmbedColors } from "../consts";
 import HelperUtils from "../utils";
 
@@ -13,7 +14,7 @@ const EmptyReportResponse: ReportResponse = {
 export class ScamGuardReport {
   public static async run(ctx: CommandContext<Cloudflare.Env>, overrideReport: ReportObject|null=null) {
     const env: Env = ctx.serverContext;
-    const usesUserThread: boolean = env.REPORT_SETTINGS.thread_by_user;
+    const usesUserThread: boolean = config.REPORT_SETTINGS.thread_by_user;
     var message: MessageOptions = {
       ephemeral: true
     };
@@ -53,7 +54,7 @@ export class ScamGuardReport {
       }
 
       // check if the given input is a correct number
-      if (!HelperUtils.IsAccountValid(env, report.reportedID)) {
+      if (!HelperUtils.IsAccountValid(report.reportedID)) {
         message.content = "This account cannot be reported";
         return message;
       }
@@ -64,7 +65,7 @@ export class ScamGuardReport {
       if (!isEmpty(msg.content))
         report.messageEvidence = `${authorName}: ${msg.content}`;
       else if (!isEmpty(msg.stickerItems)) {
-        const firstSticker = msg.stickerItems[0];
+        const firstSticker = msg.stickerItems![0];
         report.messageEvidence = `${authorName}: <sticker "${firstSticker.name}" (${firstSticker.id})>`;
       }
       // grab any attachments we might have as well
@@ -88,7 +89,7 @@ export class ScamGuardReport {
     }
 
     // get out if they're already banned.
-    if (banStatus === true && !env.REPORT_SETTINGS.report_banned) {
+    if (banStatus === true && !config.REPORT_SETTINGS.report_banned) {
       message.content = `The account \`${report.reportedID}\` has already been banned by ${APP_NAME}.`;
       return message;
     }
@@ -118,7 +119,7 @@ export class ScamGuardReport {
     }
 
     // How long we will listen to incoming reports and redirect them (this is in seconds)
-    const chainTTL: number = HelperUtils.GetChainTTLTime(env);
+    const chainTTL: number = HelperUtils.GetChainTTLTime();
 
     // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
     if (hadMessage && reportSuccess) {

@@ -8,7 +8,7 @@ An installable Discord interactions tool that allows us to be able to more easil
 
 This Discord interaction contains:
 
-* `/lookup` - for looking up an user via a command in a DM. This command can be disabled via the environment settings.
+* `/lookup` - for looking up an user via a command in a DM. This command can be disabled via the config.
 * `/help` - prints out a very nice help screen
 * User Application Interaction - for looking up the user while looking at their profile
 * Message Application Interaction - for forwarding/reporting scammers easily as well as looking them up
@@ -45,7 +45,6 @@ These can all be gotten from your Discord developer application dashboard.
 ### Application Settings
 
 * `SUPPORT_THREAD` - The discord https link to the support channel of the given Discord server
-* `CONTROL_GUILD`- The numeric guild ID for adding the moderation commands to
 
 ### Bulk Deletion
 
@@ -56,7 +55,7 @@ then bulk deletion will not be used during the scheduled cron task, and instead 
 
 ### Other Settings
 
-All other configurations can be handled by the `wrangler.toml` file.
+All other configurations are handled by the values in `config.ts`
 
 Specific messaging can be modified by changing the values in the `consts.ts` file.
 

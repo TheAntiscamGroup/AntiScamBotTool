@@ -1,11 +1,12 @@
 import isEmpty from "just-is-empty";
+import { config } from "../config";
 
 export async function CleanThreadChain(env: Env, ctx: ExecutionContext) {
   const bannedAccounts: string[] = [];
   let successfulDeletes: number = 0;
   let manualDelete: boolean = true;
   // Clean up the USER_TO_THREAD KV table if the user reported is banned.
-  if (env.REPORT_SETTINGS.thread_by_user == true) {
+  if (config.REPORT_SETTINGS.thread_by_user == true) {
     let options = { cursor: "", limit: 200 };
     // loop forever until we're done.
     while (true) {

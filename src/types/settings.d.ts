@@ -1,3 +1,11 @@
+declare type Settings = {
+  CONTROL_GUILD?: string;
+  APP_SETTINGS: ApplicationSettings;
+  COMMAND_SETTINGS: CommandSettings;
+  REPORT_SETTINGS: ReportSettings;
+  LOOKUP_SETTINGS: LookupSettings;
+};
+
 declare type ApplicationSettings = {
   redirect_to_install: boolean;
   can_use_clean: boolean;

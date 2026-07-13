@@ -2,6 +2,7 @@ import {
   ApplicationIntegrationType, CommandContext, EmbedField,
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator
 } from "slash-create/web";
+import { config } from "../config";
 import { APP_EMBED_THUMBNAIL, APP_NAME, CommandDescription, EmbedColors, PRIVACY_LINK, TOS_LINK } from "../consts";
 import HelperUtils from "../utils";
 
@@ -58,7 +59,7 @@ export default class LookupCommand extends SlashCommand {
 
     // Check if the user can report
     if (await HelperUtils.CanAccountReport(curUser, env)) {
-      const timeoutStr: string = (env.REPORT_SETTINGS.thread_by_user as boolean) == false ? ` and it is done within \`${env.REPORT_SETTINGS.message_source_lifetime || 60}\` of the previous action.\nAn expiration time will be provided upon each successful send` : "";
+      const timeoutStr: string = config.REPORT_SETTINGS.thread_by_user == false ? ` and it is done within \`${config.REPORT_SETTINGS.message_source_lifetime || 60}\` of the previous action.\nAn expiration time will be provided upon each successful send` : "";
       responseFields.push(spacingField,
       {
         name: "Reporting Accounts",

@@ -5,15 +5,19 @@ import {
   CommandContext,
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator
 } from "slash-create/web";
+import { config } from "../config";
 import { CommandDescription } from "../consts";
 import HelperUtils from "../utils";
 
 export default class ParseIDHelperCommand extends SlashCommand {
-  constructor(creator: SlashCreator, guildID: string) {
+  constructor(creator: SlashCreator) {
+    if (!HelperUtils.CanUseModCommand())
+      throw new Error("Command Disabled");
+
     super(creator, {
       contexts: [InteractionContextType.GUILD],
       integrationTypes: [ApplicationIntegrationType.GUILD_INSTALL],
-      guildIDs: guildID,
+      guildIDs: config.CONTROL_GUILD!,
       type: ApplicationCommandType.MESSAGE,
       name: CommandDescription.ParseID,
       forcePermissions: true,
@@ -22,13 +26,17 @@ export default class ParseIDHelperCommand extends SlashCommand {
     });
   }
   async run(ctx: CommandContext<Cloudflare.Env>) {
-    const env: Env = ctx.serverContext;
     var responseMsg: MessageOptions = {
       ephemeral: true,
     };
 
+    if (!HelperUtils.CanUseModCommand()) {
+      responseMsg.content = "This command is not enabled.";
+      return responseMsg;
+    }
+
     // Technically shouldn't be necessary but we'll do it anyways
-    if (ctx.guildID !== env.CONTROL_GUILD && !isEmpty(env.CONTROL_GUILD)) {
+    if (ctx.guildID !== config.CONTROL_GUILD && !isEmpty(config.CONTROL_GUILD)) {
       responseMsg.content = "This command is not allowed outside of the control guild";
       return responseMsg;
     }
@@ -40,7 +48,7 @@ export default class ParseIDHelperCommand extends SlashCommand {
     }
 
     // ScamGuard apps already format usernames properly.
-    if (HelperUtils.IsAccountProtected(env, msg.author.id)) {
+    if (HelperUtils.IsAccountProtected(msg.author.id)) {
       responseMsg.content = "This command cannot be used on this sender";
       return responseMsg;
     }
@@ -61,7 +69,7 @@ export default class ParseIDHelperCommand extends SlashCommand {
     let outputText = "Matched IDs:\n";
     checkIDs!.forEach((match) => {
       // don't log any SG bots in here
-      if (!HelperUtils.IsAccountProtected(env, match))
+      if (!HelperUtils.IsAccountProtected(match))
         outputText += `* \`${match}\`\n`;
     });
     responseMsg.content = outputText;

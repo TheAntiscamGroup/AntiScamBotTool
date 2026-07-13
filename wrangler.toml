@@ -46,24 +46,3 @@ crons = ["0 3 * * 2"]
 CF_ACCOUNT_ID="c56f01b66d3ce2234fb0012a345aa1c6"
 # The binding for REPORT_THREAD_CHAIN above. Used for bulk deletion of old records
 THREAD_CHAIN_KV_ID="6acf800bb3fa47f88eb9d296a0808668"
-
-# redirect_to_install: if the tool should redirect to install on invalid pathing
-# accounts: other accounts that are related to this app
-APP_SETTINGS={redirect_to_install=true, can_use_clean=true, accounts=["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557"]}
-
-# log_run: should commands log their execution
-# log_errors: should we log error messages
-# use_forbid_list: if the tool should check if an user is not allowed
-# install_mod_commands: if the tool should also register commands that start with "MOD:", they will be only usable by those that have access to the audit log
-COMMAND_SETTINGS={log_run=false, log_errors=true, use_forbid_list=true, install_mod_commands=true}
-
-# allow_all: if all users can report, allow list unneeded. List uses the CAN_REPORT KV
-# can_report_in_servers: if messages can be reported from servers. The CONTROL_GUILD setting MUST BE SET to use this as true
-# report_banned: if banned accounts can continue to be reported until cleanup
-# use_message_source: if reports should be based on source channel or by the reported account
-# message_source_lifetime: time of how long we should keep chain threads active. only used if use_message_source is false
-REPORT_SETTINGS={allow_all=true, can_report_in_servers=false, report_banned=true, thread_by_user=true, message_source_lifetime="1d 6h 30m"}
-
-# slash_enabled: if /lookup is enabled. Usually disabled to prevent mistakes
-# allow_all: if all users can lookup accounts, allow list unneeded. List uses the CAN_REPORT KV
-LOOKUP_SETTINGS={slash_enabled=false, allow_all=true}

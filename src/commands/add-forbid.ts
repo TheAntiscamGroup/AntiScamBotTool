@@ -5,13 +5,17 @@ import {
 } from "slash-create/web";
 import { CommandDescription } from "../consts";
 import HelperUtils from "../utils";
+import { config } from "../config";
 
 export default class ForbidAccessHelperCommand extends SlashCommand {
-  constructor(creator: SlashCreator, guildID: string) {
+  constructor(creator: SlashCreator) {
+    if (!HelperUtils.CanUseModCommand())
+      throw new Error("Command Disabled");
+
     super(creator, {
       contexts: [InteractionContextType.GUILD],
       integrationTypes: [ApplicationIntegrationType.GUILD_INSTALL],
-      guildIDs: guildID,
+      guildIDs: config.CONTROL_GUILD!,
       type: ApplicationCommandType.CHAT_INPUT,
       name: "forbid",
       description: CommandDescription.Forbid,
@@ -34,13 +38,18 @@ export default class ForbidAccessHelperCommand extends SlashCommand {
       ephemeral: true,
     };
 
-    if (targetUser === undefined || targetUser === null || !HelperUtils.IsAccountValid(env, targetUser)) {
+    if (!HelperUtils.CanUseModCommand()) {
+      message.content = "This command is not enabled.";
+      return message;
+    }
+
+    if (targetUser === undefined || targetUser === null || !HelperUtils.IsAccountValid(targetUser)) {
       message.content = `\`${targetUser}\` is invalid!`;
       return message;
     }
 
     // Technically shouldn't be necessary but we'll do it anyways
-    if (ctx.guildID !== env.CONTROL_GUILD && !isEmpty(env.CONTROL_GUILD)) {
+    if (ctx.guildID !== config.CONTROL_GUILD && !isEmpty(config.CONTROL_GUILD)) {
       message.content = "This command is not allowed outside of the control guild";
       return message;
     }

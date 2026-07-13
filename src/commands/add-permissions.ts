@@ -3,15 +3,19 @@ import {
   ApplicationCommandType, ApplicationIntegrationType, CommandContext,
   InteractionContextType, MessageOptions, SlashCommand, SlashCreator, User
 } from "slash-create/web";
+import { config } from "../config";
 import { CommandDescription } from "../consts";
 import HelperUtils from "../utils";
 
 export default class AddPermissionsHelperCommand extends SlashCommand {
-  constructor(creator: SlashCreator, guildID: string) {
+  constructor(creator: SlashCreator) {
+    if (!HelperUtils.CanUseModCommand())
+      throw new Error("Command Disabled");
+
     super(creator, {
       contexts: [InteractionContextType.GUILD],
       integrationTypes: [ApplicationIntegrationType.GUILD_INSTALL],
-      guildIDs: guildID,
+      guildIDs: config.CONTROL_GUILD!,
       type: ApplicationCommandType.USER,
       name: CommandDescription.Add,
       forcePermissions: true,
@@ -25,13 +29,18 @@ export default class AddPermissionsHelperCommand extends SlashCommand {
       ephemeral: true
     };
 
+    if (!HelperUtils.CanUseModCommand()) {
+      responseMsg.content = "This command is not enabled.";
+      return responseMsg;
+    }
+
     if (targetUser === undefined || targetUser === null || targetUser.id === ctx.user.id) {
       responseMsg.content = `\`${targetUser}\` is invalid!`;
       return responseMsg;
     }
 
     // Technically shouldn't be necessary but we'll do it anyways
-    if (ctx.guildID !== env.CONTROL_GUILD && !isEmpty(env.CONTROL_GUILD)) {
+    if (ctx.guildID !== config.CONTROL_GUILD && !isEmpty(config.CONTROL_GUILD)) {
       responseMsg.content = "This command is not allowed outside of the control guild";
       return responseMsg;
     }
