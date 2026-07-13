@@ -9,4 +9,6 @@ module.exports = {
   applicationId: process.env.DISCORD_APP_ID,
   // This is where the path to command files are, .ts files are supported!
   commandPath: './src/commands',
+  // ignore register errors
+  ignoreRegisterErrors: true,
 };

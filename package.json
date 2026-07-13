@@ -2,7 +2,7 @@
   "main": "src/index.ts",
   "name": "antiscambottool",
   "scripts": {
-    "sync": "npx slash-up@latest sync",
+    "sync": "npx slash-up sync",
     "dev": "wrangler dev",
     "types": "wrangler types src/types/wrangler.d.ts",
     "deploy": "wrangler deploy"
@@ -15,7 +15,7 @@
   "dependencies": {
     "just-is-empty": "^3.4.1",
     "just-unique": "^4.2.0",
-    "parse-duration": "^2.1.6"
+    "parse-duration": "^2.1.8"
   },
   "overrides": {
     "slash-create": {
@@ -23,6 +23,6 @@
     }
   },
   "engines": {
-    "node": ">=24.11"
+    "node": ">=24.15"
   }
 }
