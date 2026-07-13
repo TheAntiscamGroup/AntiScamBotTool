@@ -8,6 +8,7 @@ on:
       - "src/commands.ts"
       - "src/consts.ts"
       - "src/config.ts"
+      - ".github/workflows/sync.yml"
 
 concurrency:
   group: "sync"
@@ -45,7 +46,6 @@ jobs:
   clean_deploys:
     runs-on: ubuntu-latest
     name: Clean Discord Sync Deploys
-    needs: ["command_sync"]
     permissions:
       deployments: write
     steps:
