@@ -10,8 +10,8 @@ export const CommandDescription = {
   SlashCheck: `looks up the given account with ${APP_NAME}`,
   Check: `Check with ${APP_NAME}`,
   Report: `Report Message to ${APP_NAME}`,
-  Forbid: "MOD: Forbid an user from using the tool",
-  Add: "MOD: Add to Tool Reporter",
+  Forbid: "MOD: Forbid user access",
+  Add: "MOD: Allow user access",
   Help: `Get help using the ${APP_NAME} User Tool`,
   ParseID: "MOD: Pull IDs from report"
 };
