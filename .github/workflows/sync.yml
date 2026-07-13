@@ -5,7 +5,9 @@ on:
   push:
     branches: ["main"]
     paths:
-      - "src/(commands|consts|config).ts"
+      - "src/commands.ts"
+      - "src/consts.ts"
+      - "src/config.ts"
 
 concurrency:
   group: "sync"
