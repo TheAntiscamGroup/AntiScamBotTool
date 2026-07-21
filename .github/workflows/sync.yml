@@ -14,12 +14,14 @@ concurrency:
   group: "sync"
   cancel-in-progress: true
 
+permissions:
+  deployments: write
+  contents: read
+
 jobs:
   command_sync:
     name: Sync Discord Commands
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
     environment:
       name: discord
     steps:
@@ -44,14 +46,8 @@ jobs:
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
   clean_deploys:
-    runs-on: ubuntu-latest
     name: Clean Discord Sync Deploys
-    permissions:
-      deployments: write
-    steps:
-      - name: Cleanup Previous Deploys
-        uses: strumwolf/delete-deployment-environment@035f6d27c8b8951729f4d71b2d3d6a7975139476
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          environment: discord
-          onlyRemoveDeployments: true
+    uses: theantiscamgroup/workflows/.github/workflows/clean_deploys.yml@main
+    secrets: inherit
+    with:
+      environment: discord
