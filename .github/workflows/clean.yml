@@ -15,6 +15,6 @@ concurrency:
 jobs:
   run:
     name: Cleanup
-    uses: socksthewolf/workflows/.github/workflows/clean.yml@main
+    uses: theantiscamgroup/workflows/.github/workflows/clean.yml@main
     secrets:
       CLEAN_TOKEN: ${{ secrets.GITHUB_TOKEN }}

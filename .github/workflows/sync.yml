@@ -12,7 +12,7 @@ on:
 
 concurrency:
   group: "sync"
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   deployments: write
@@ -22,29 +22,28 @@ jobs:
   command_sync:
     name: Sync Discord Commands
     runs-on: ubuntu-latest
-    environment:
-      name: discord
+    environment: discord
     steps:
       - name: Checkout
-        uses: actions/checkout@v7.0.0
+        uses: actions/checkout@v7
+
+        # Install runtime and packages
       - name: Setup Node
         uses: actions/setup-node@v6
         with:
           cache: "npm"
           node-version-file: ".node-version"
           package-manager-cache: true
-        # grab this for the runtime
       - name: Install Node Packages
-        run: npm install
-        # Install slash-up
-      - name: Install Slash Up
-        run: npm install slash-up@latest
+        run: npm install && npm install slash-up@latest
+
       - name: Sync Commands
         if: success()
         run: npm run sync
         env:
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
+
   clean_deploys:
     name: Clean Discord Sync Deploys
     uses: theantiscamgroup/workflows/.github/workflows/clean_deploys.yml@main
