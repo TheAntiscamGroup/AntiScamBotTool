@@ -47,6 +47,5 @@ jobs:
   clean_deploys:
     name: Clean Discord Sync Deploys
     uses: theantiscamgroup/workflows/.github/workflows/clean_deploys.yml@main
-    secrets: inherit
     with:
       environment: discord
