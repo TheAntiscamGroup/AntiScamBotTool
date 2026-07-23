@@ -1,6 +1,5 @@
 # Syncs discord commands
 name: Sync Discord Commands
-
 on:
   push:
     branches: ["main"]
@@ -46,7 +45,6 @@ jobs:
           DISCORD_APP_ID: ${{ secrets.DISCORD_APP_ID }}
 
   clean_deploys:
-    name: Clean Discord Sync Deploys
     uses: theantiscamgroup/workflows/.github/workflows/clean_deploys.yml@main
     with:
       environment: discord
