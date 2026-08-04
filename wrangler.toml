@@ -41,6 +41,9 @@ mode = "smart"
 [triggers]
 crons = ["0 3 * * 2"]
 
+[secrets]
+required=["DISCORD_APP_ID","DISCORD_PUBLIC_KEY","DISCORD_BOT_TOKEN","SUPPORT_THREAD","BULK_KV_API_TOKEN"]
+
 [vars]
 # Your CF Account ID, found here: https://developers.cloudflare.com/fundamentals/account/find-account-and-zone-ids/
 CF_ACCOUNT_ID="c56f01b66d3ce2234fb0012a345aa1c6"
