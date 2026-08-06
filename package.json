@@ -17,9 +17,6 @@
     "just-unique": "^4.2.0",
     "parse-duration": "^2.1.8"
   },
-  "engines": {
-    "node": ">=24.15"
-  },
   "overrides": {
     "wrangler": {
       "undici": "^7.29.0"
