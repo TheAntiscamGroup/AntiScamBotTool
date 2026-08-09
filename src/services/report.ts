@@ -4,22 +4,15 @@ import { config } from "../config";
 import { APP_EMBED_THUMBNAIL, APP_NAME, EmbedColors } from "../consts";
 import HelperUtils from "../utils";
 
-const EmptyReportResponse: ReportResponse = {
-  status: 0,
-  threadLink: "",
-  threadID: "",
-  success: false
-};
-
 export class ScamGuardReport {
   public static async run(ctx: CommandContext<Cloudflare.Env>, overrideReport: ReportObject|null=null) {
     const env: Env = ctx.serverContext;
     const usesUserThread: boolean = config.REPORT_SETTINGS.thread_by_user;
-    var message: MessageOptions = {
+    const message: MessageOptions = {
       ephemeral: true
     };
 
-    let report: ReportObject = overrideReport != null ? overrideReport : {
+    const report: ReportObject = overrideReport != null ? overrideReport : {
       reportedID: "",
       reportedUserName: "",
       source: "User Tool"
@@ -40,10 +33,10 @@ export class ScamGuardReport {
     }
 
     // If this was sent via a right click message report
-    const hadMessage = (ctx.targetMessage !== null && ctx.targetMessage !== undefined);
+    const hadMessage: boolean = (ctx.targetMessage !== null && ctx.targetMessage !== undefined);
 
     if (hadMessage) {
-      const msg = ctx.targetMessage;
+      const msg = ctx.targetMessage!;
       const authorName: string = msg.author.username;
       report.reportedID = msg.author.id;
 
@@ -79,8 +72,8 @@ export class ScamGuardReport {
     }
 
     // Check to see if account is already banned.
-    let banStatus: boolean = false;
-    const apiResponse = await (env.API_SERVICE as CheckAccountService).checkAccount(report.reportedID);
+    let banStatus: boolean;
+    const apiResponse: CheckAccountReturn = await (env.API_SERVICE as CheckAccountService).checkAccount(report.reportedID);
     if (apiResponse.valid) {
       banStatus = apiResponse.banned;
     } else {
@@ -106,8 +99,8 @@ export class ScamGuardReport {
       return message;
     }
 
-    let response: ReportResponse = EmptyReportResponse;
-    var reportSuccess: boolean = false;
+    let response: ReportResponse;
+    let reportSuccess: boolean;
     try {
       const reporter: ReportAccountService = (env.REPORT as ReportAccountService);
       response = (firstReport) ? await reporter.post(report, true) : await reporter.postFollowup(report, prevThreadID);
@@ -124,7 +117,7 @@ export class ScamGuardReport {
     // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
     if (hadMessage && reportSuccess) {
       try {
-        let options: KVNamespacePutOptions = {
+        const options: KVNamespacePutOptions = {
           expirationTtl: (!usesUserThread) ? chainTTL : undefined
         };
         await env.REPORT_THREAD_CHAIN.put(lookupKey, response.threadID, options);

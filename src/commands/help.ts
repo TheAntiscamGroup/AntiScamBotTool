@@ -1,9 +1,16 @@
+import type {
+  CommandContext, EmbedField,
+  MessageOptions, SlashCreator
+} from "slash-create/web";
 import {
-  ApplicationIntegrationType, CommandContext, EmbedField,
-  InteractionContextType, MessageOptions, SlashCommand, SlashCreator
+  ApplicationIntegrationType,
+  InteractionContextType, SlashCommand
 } from "slash-create/web";
 import { config } from "../config";
-import { APP_EMBED_THUMBNAIL, APP_NAME, CommandDescription, EmbedColors, PRIVACY_LINK, TOS_LINK } from "../consts";
+import {
+  APP_EMBED_THUMBNAIL, APP_NAME, CommandDescription,
+  EmbedColors, PRIVACY_LINK, TOS_LINK
+} from "../consts";
 import HelperUtils from "../utils";
 
 export default class LookupCommand extends SlashCommand {
@@ -43,7 +50,7 @@ export default class LookupCommand extends SlashCommand {
       return message;
     }
 
-    let responseFields = [];
+    const responseFields = [];
 
     // Check if the user can do lookups
     if (await HelperUtils.CanAccountLookup(curUser, env)) {

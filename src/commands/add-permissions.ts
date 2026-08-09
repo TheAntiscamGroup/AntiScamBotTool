@@ -1,7 +1,12 @@
 import isEmpty from "just-is-empty";
+import type {
+  CommandContext,
+  MessageOptions, SlashCreator,
+  User
+} from "slash-create/web";
 import {
-  ApplicationCommandType, ApplicationIntegrationType, CommandContext,
-  InteractionContextType, MessageOptions, SlashCommand, SlashCreator, User
+  ApplicationCommandType, ApplicationIntegrationType,
+  InteractionContextType, SlashCommand
 } from "slash-create/web";
 import { config } from "../config";
 import { CommandDescription } from "../consts";
@@ -25,7 +30,7 @@ export default class AddPermissionsHelperCommand extends SlashCommand {
   async run(ctx: CommandContext<Cloudflare.Env>) {
     const env: Env = ctx.serverContext;
     const targetUser: User|null|undefined = ctx.targetUser;
-    var responseMsg: MessageOptions = {
+    const responseMsg: MessageOptions = {
       ephemeral: true
     };
 

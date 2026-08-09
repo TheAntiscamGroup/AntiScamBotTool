@@ -1,9 +1,9 @@
 import isEmpty from "just-is-empty";
 import unique from "just-unique";
+import type { CommandContext, MessageOptions, SlashCreator } from "slash-create/web";
 import {
   ApplicationCommandType, ApplicationIntegrationType,
-  CommandContext,
-  InteractionContextType, MessageOptions, SlashCommand, SlashCreator
+  InteractionContextType, SlashCommand
 } from "slash-create/web";
 import { config } from "../config";
 import { CommandDescription } from "../consts";
@@ -26,7 +26,7 @@ export default class ParseIDHelperCommand extends SlashCommand {
     });
   }
   async run(ctx: CommandContext<Cloudflare.Env>) {
-    var responseMsg: MessageOptions = {
+    const responseMsg: MessageOptions = {
       ephemeral: true,
     };
 

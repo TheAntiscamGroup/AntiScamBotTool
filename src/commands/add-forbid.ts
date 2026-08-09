@@ -1,11 +1,15 @@
 import isEmpty from "just-is-empty";
-import {
-  ApplicationCommandType, ApplicationIntegrationType, CommandContext, CommandOptionType,
-  InteractionContextType, MessageOptions, SlashCommand, SlashCreator
+import type {
+  CommandContext, MessageOptions,
+  SlashCreator
 } from "slash-create/web";
+import {
+  ApplicationCommandType, ApplicationIntegrationType, CommandOptionType,
+  InteractionContextType, SlashCommand
+} from "slash-create/web";
+import { config } from "../config";
 import { CommandDescription } from "../consts";
 import HelperUtils from "../utils";
-import { config } from "../config";
 
 export default class ForbidAccessHelperCommand extends SlashCommand {
   constructor(creator: SlashCreator) {
@@ -34,7 +38,7 @@ export default class ForbidAccessHelperCommand extends SlashCommand {
   async run(ctx: CommandContext<Cloudflare.Env>) {
     const env: Env = ctx.serverContext;
     const targetUser: string|null|undefined = ctx.options["account"];
-    var message: MessageOptions = {
+    const message: MessageOptions = {
       ephemeral: true,
     };
 

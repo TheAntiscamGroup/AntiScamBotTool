@@ -3,10 +3,10 @@ import { commands } from './commands';
 import { config } from './config';
 import { CleanThreadChain } from './services/clean';
 
-const cfServer = new CloudflareWorkerServer();
+const cfServer: CloudflareWorkerServer = new CloudflareWorkerServer();
 let creator: SlashCreator;
 // Since we only get our secrets on fetch, set them before running
-function makeCreator(env: Record<string, any>) {
+function makeCreator(env: Env) {
   creator = new SlashCreator({
     applicationID: env.DISCORD_APP_ID,
     publicKey: env.DISCORD_PUBLIC_KEY,
@@ -32,7 +32,7 @@ function makeCreator(env: Record<string, any>) {
 }
 
 export default {
-  async fetch(request: any, env: Env, ctx: ExecutionContext) {
+  async fetch(request: Request, env: Env, ctx: ExecutionContext) {
     // handle redirects if this wasn't a request from Discord
     if (request.method !== "POST") {
       const requestLoc = new URL(request.url);
@@ -52,7 +52,7 @@ export default {
     return cfServer.fetch(request, env, ctx);
   },
   // handling cleanup operations
-  async scheduled(controller: ScheduledController, env: Env, ctx: ExecutionContext) {
+  async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext) {
     await CleanThreadChain(env, ctx);
   },
 };

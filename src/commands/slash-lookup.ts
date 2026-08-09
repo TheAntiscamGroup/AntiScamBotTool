@@ -1,6 +1,7 @@
+import type { CommandContext, MessageOptions, SlashCreator } from "slash-create/web";
 import {
-  ApplicationIntegrationType, CommandContext, CommandOptionType,
-  InteractionContextType, SlashCommand, SlashCreator
+  ApplicationIntegrationType, CommandOptionType,
+  InteractionContextType, SlashCommand
 } from "slash-create/web";
 import { config } from "../config";
 import { CommandDescription } from "../consts";
@@ -33,7 +34,13 @@ export default class SlashLookupCommand extends SlashCommand {
   }
 
   async run(ctx: CommandContext<Cloudflare.Env>) {
-    // TODO: probably disable the return if slash_enabled is false
+    if (!config.LOOKUP_SETTINGS.slash_enabled) {
+      const message: MessageOptions = {
+        ephemeral: true,
+        content: "This command is disabled."
+      };
+      return message;
+    }
     return await ScamGuardLookup.run(ctx, ctx.options["account"]);
   }
 };

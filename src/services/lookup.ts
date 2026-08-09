@@ -7,7 +7,7 @@ export class ScamGuardLookup {
   public static async run(ctx: CommandContext<Cloudflare.Env>, lookupUser: string) {
     const curUser: string = ctx.user.id;
     const env: Env = ctx.serverContext;
-    var message: MessageOptions = {
+    let message: MessageOptions = {
       ephemeral: true
     };
 
@@ -41,8 +41,8 @@ export class ScamGuardLookup {
     }
 
     // Determine what the status is of the other user, if banned or not
-    let banStatus = false;
-    let apiResponse;
+    let banStatus: boolean;
+    let apiResponse: BanDetailsReturn;
 
     // Query to the API service
     try {

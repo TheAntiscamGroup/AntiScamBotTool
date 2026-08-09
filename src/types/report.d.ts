@@ -1,5 +1,5 @@
 /* Account reporting */
-declare type ReportObject = {
+declare interface ReportObject {
   reportedID: string;
   reportedUserName: string;
   reportTitle?: string;
@@ -12,11 +12,11 @@ declare type ReportObject = {
   source: string;
 };
 
-declare type ReportResponse = {
-  status: number,
-  threadLink: string,
-  threadID: string,
-  success: boolean
+declare interface ReportResponse {
+  status: number;
+  threadLink: string;
+  threadID: string;
+  success: boolean;
 };
 
 declare type ReportAccount = (report: ReportObject, waitForThread: boolean) => Promise<ReportResponse>;

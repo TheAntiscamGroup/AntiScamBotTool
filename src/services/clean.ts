@@ -1,13 +1,13 @@
 import isEmpty from "just-is-empty";
 import { config } from "../config";
 
-export async function CleanThreadChain(env: Env, ctx: ExecutionContext) {
+export async function CleanThreadChain(env: Env, ctx: ExecutionContext): Promise<ThreadCleanResult> {
   const bannedAccounts: string[] = [];
   let successfulDeletes: number = 0;
   let manualDelete: boolean = true;
   // Clean up the USER_TO_THREAD KV table if the user reported is banned.
   if (config.REPORT_SETTINGS.thread_by_user == true) {
-    let options = { cursor: "", limit: 200 };
+    const options: KVNamespaceListOptions = { cursor: "", limit: 200 };
     // loop forever until we're done.
     while (true) {
       // list all the entries in the KV table
@@ -45,12 +45,14 @@ export async function CleanThreadChain(env: Env, ctx: ExecutionContext) {
           body: JSON.stringify(bannedAccounts)
         });
       if (bulkDelete.ok) {
-        const result: any = await bulkDelete.json();
-        if (result.success) {
-          successfulDeletes = result.result.successful_key_count;
-          console.log(`Keys failed to delete: ${result.result.unsuccessful_keys}`);
+        const deleteResult = await bulkDelete.json<BulkDeleteKVResponse>();
+        if (deleteResult.success) {
+          successfulDeletes = deleteResult.result.successful_key_count;
+          console.warn(`Keys failed to delete: ${deleteResult.result.unsuccessful_keys}`);
           manualDelete = false;
         }
+      } else {
+        console.warn(`Unable to bulk delete, got error "${bulkDelete.statusText}"`);
       }
     }
 
