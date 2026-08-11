@@ -17,17 +17,17 @@ function makeCreator(env: Env) {
 
   // if we should log any errors
   if (config.COMMAND_SETTINGS.log_errors) {
-    creator.on('error', (error) => console.error(error.stack || error.toString()));
-    creator.on('commandError', (command, error) =>
+    creator.on('error', (error) => { console.error(error.stack || error.toString()); });
+    creator.on('commandError', (command, error) => {
       console.error(`Command ${command.commandName} errored:`, error.stack || error.toString())
-    );
+    });
   }
 
   // If we should log all command executions (ideally true only in development)
   if (config.COMMAND_SETTINGS.log_run) {
-    creator.on('commandRun', (command, _, ctx) =>
+    creator.on('commandRun', (command, _, ctx) => {
       console.info(`${ctx.user.username} (${ctx.user.id}) ran command ${command.commandName}`)
-    );
+    });
   }
 }
 
@@ -49,6 +49,7 @@ export default {
     // inject our discord commands, if we don't have them (subcommands)
     if (!creator)
       makeCreator(env);
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return cfServer.fetch(request, env, ctx);
   },
   // handling cleanup operations

@@ -6,7 +6,7 @@ import {
 import { config } from "../config";
 import { CommandDescription } from "../consts";
 import { ScamGuardReport } from "../services/report";
-import HelperUtils from "../utils";
+import * as HelperUtils from "../utils";
 
 export default class MessageReportCommand extends SlashCommand {
   constructor(creator: SlashCreator) {
@@ -51,6 +51,6 @@ export default class MessageReportCommand extends SlashCommand {
       return errMsg;
     }
 
-    return await ScamGuardReport.run(ctx);
+    return await ScamGuardReport(ctx);
   }
 };

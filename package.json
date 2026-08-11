@@ -5,6 +5,7 @@
   "scripts": {
     "sync": "npx slash-up sync",
     "dev": "wrangler dev",
+    "lint": "eslint --stats",
     "types": "wrangler types src/types/wrangler.d.ts",
     "deploy": "wrangler deploy"
   },

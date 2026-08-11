@@ -24,6 +24,6 @@ export default class MessageLookupCommand extends SlashCommand {
       };
     }
 
-    return await ScamGuardLookup.run(ctx, ctx.targetMessage.author.id);
+    return await ScamGuardLookup(ctx, ctx.targetMessage.author.id);
   }
 };

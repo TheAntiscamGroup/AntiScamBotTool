@@ -24,6 +24,6 @@ export default class ClickLookupCommand extends SlashCommand {
       };
     }
 
-    return await ScamGuardLookup.run(ctx, ctx.targetUser.id);
+    return await ScamGuardLookup(ctx, ctx.targetUser.id);
   }
 };

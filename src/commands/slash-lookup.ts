@@ -41,6 +41,6 @@ export default class SlashLookupCommand extends SlashCommand {
       };
       return message;
     }
-    return await ScamGuardLookup.run(ctx, ctx.options["account"]);
+    return await ScamGuardLookup(ctx, ctx.options["account"] as string);
   }
 };

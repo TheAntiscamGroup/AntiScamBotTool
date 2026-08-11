@@ -6,9 +6,10 @@ export async function CleanThreadChain(env: Env, ctx: ExecutionContext): Promise
   let successfulDeletes: number = 0;
   let manualDelete: boolean = true;
   // Clean up the USER_TO_THREAD KV table if the user reported is banned.
-  if (config.REPORT_SETTINGS.thread_by_user == true) {
+  if (config.REPORT_SETTINGS.thread_by_user) {
     const options: KVNamespaceListOptions = { cursor: "", limit: 200 };
     // loop forever until we're done.
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     while (true) {
       // list all the entries in the KV table
       const response = await env.REPORT_THREAD_CHAIN.list(options);
@@ -23,17 +24,20 @@ export async function CleanThreadChain(env: Env, ctx: ExecutionContext): Promise
             bannedAccounts.push(userEntry.name);
           }
         } catch(err) {
-          console.error(`Encountered an error ${err} while trying to delete user ${userEntry} from the KV table`);
+          console.error(`Encountered an error ${err} while trying to delete user ${JSON.stringify(userEntry)} from the KV table`);
           continue;
         }
       }
       // loop again if we're not at the end of the KV table
-      if (response.list_complete !== true)
+      if (!response.list_complete)
         options.cursor = response.cursor;
       else
         break;
     }
-    const canBulkDelete: boolean = (!isEmpty(env.BULK_KV_API_TOKEN) && !isEmpty(env.THREAD_CHAIN_KV_ID) && !isEmpty(env.CF_ACCOUNT_ID));
+    const canBulkDelete: boolean = (!isEmpty(env.BULK_KV_API_TOKEN) &&
+      !isEmpty(env.THREAD_CHAIN_KV_ID) &&
+      !isEmpty(env.CF_ACCOUNT_ID));
+
     if (canBulkDelete && bannedAccounts.length > 0) {
       const bulkDelete = await fetch(
         `https://api.cloudflare.com/client/v4/accounts/${env.CF_ACCOUNT_ID}/storage/kv/namespaces/${env.THREAD_CHAIN_KV_ID}/bulk/delete`, {

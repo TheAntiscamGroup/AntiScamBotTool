@@ -7,7 +7,7 @@ import {
 } from "slash-create/web";
 import { config } from "../config";
 import { CommandDescription } from "../consts";
-import HelperUtils from "../utils";
+import * as HelperUtils from "../utils";
 
 export default class ParseIDHelperCommand extends SlashCommand {
   constructor(creator: SlashCreator) {
@@ -17,7 +17,7 @@ export default class ParseIDHelperCommand extends SlashCommand {
     super(creator, {
       contexts: [InteractionContextType.GUILD],
       integrationTypes: [ApplicationIntegrationType.GUILD_INSTALL],
-      guildIDs: config.CONTROL_GUILD!,
+      guildIDs: config.CONTROL_GUILD,
       type: ApplicationCommandType.MESSAGE,
       name: CommandDescription.ParseID,
       forcePermissions: true,
@@ -67,7 +67,7 @@ export default class ParseIDHelperCommand extends SlashCommand {
 
     // format all of our findings
     let outputText = "Matched IDs:\n";
-    checkIDs!.forEach((match) => {
+    checkIDs.forEach((match) => {
       // don't log any SG bots in here
       if (!HelperUtils.IsAccountProtected(match))
         outputText += `* \`${match}\`\n`;

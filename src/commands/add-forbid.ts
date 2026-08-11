@@ -9,7 +9,7 @@ import {
 } from "slash-create/web";
 import { config } from "../config";
 import { CommandDescription } from "../consts";
-import HelperUtils from "../utils";
+import * as HelperUtils from "../utils";
 
 export default class ForbidAccessHelperCommand extends SlashCommand {
   constructor(creator: SlashCreator) {
@@ -19,7 +19,7 @@ export default class ForbidAccessHelperCommand extends SlashCommand {
     super(creator, {
       contexts: [InteractionContextType.GUILD],
       integrationTypes: [ApplicationIntegrationType.GUILD_INSTALL],
-      guildIDs: config.CONTROL_GUILD!,
+      guildIDs: config.CONTROL_GUILD,
       type: ApplicationCommandType.CHAT_INPUT,
       name: "forbid",
       description: CommandDescription.Forbid,
@@ -37,6 +37,7 @@ export default class ForbidAccessHelperCommand extends SlashCommand {
   }
   async run(ctx: CommandContext<Cloudflare.Env>) {
     const env: Env = ctx.serverContext;
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const targetUser: string|null|undefined = ctx.options["account"];
     const message: MessageOptions = {
       ephemeral: true,
