@@ -1,3 +1,4 @@
+import isEmpty from "just-is-empty";
 import type { CommandContext, EmbedField, MessageOptions } from "slash-create/web";
 import { config } from "../config";
 import { APP_EMBED_THUMBNAIL, APP_NAME, EmbedColors } from "../consts";
@@ -86,7 +87,7 @@ export async function ScamGuardLookup(ctx: CommandContext<Cloudflare.Env>, looku
         });
       }
     }
-    if (apiResponse.evidence_thread_str !== undefined && apiResponse.evidence_thread_str !== "") {
+    if (!isEmpty(apiResponse.evidence_thread_str)) {
       reportThreadName = "Evidence Thread";
       reportThreadLink = `https://discord.com/channels/${config.CONTROL_GUILD}/${apiResponse.evidence_thread_str}`;
     }

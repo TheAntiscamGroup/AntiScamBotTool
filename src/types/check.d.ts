@@ -9,7 +9,7 @@ declare type BanDetailsReturn = CheckAccountReturn & {
   banned_on?: string;
   banned_by: string;
   evidence_thread?: int;
-  evidence_thread_str?: string;
+  evidence_thread_str?: string|null;
 };
 declare type StatsDetailsReturn = APICheckReturn & {
   count: number;

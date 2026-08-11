@@ -47,6 +47,7 @@ export default {
     }
 
     // inject our discord commands, if we don't have them (subcommands)
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!creator)
       makeCreator(env);
     // eslint-disable-next-line @typescript-eslint/no-unsafe-return
