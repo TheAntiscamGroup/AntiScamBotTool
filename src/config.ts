@@ -8,8 +8,8 @@ export const config: Settings = {
     redirect_to_install: true,
     // if the /clean endpoint is exposed (allows for force cleaning of KV entries)
     can_use_clean: false,
-    // other discord accounts ids that are related to this app, this app cannot be used on these accounts
-    accounts: ["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557"]
+    // other discord accounts ids that are related to this app, this app cannot be used on these accounts/webhooks
+    accounts: ["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557", "1285010284897112154"]
   },
 
   COMMAND_SETTINGS: {
