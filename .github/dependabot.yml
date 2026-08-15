@@ -17,6 +17,16 @@ updates:
       semver-major-days: 30
       semver-minor-days: 12
       semver-patch-days: 7
+    groups:
+      eslint:
+        patterns:
+          - "*eslint*"
+          - "globals"
+          - "jiti"
+      app:
+        patterns:
+          - "parse-duration"
+          - "slash-create"
     open-pull-requests-limit: 5
     ignore:
       - dependency-name: '@types/node'
