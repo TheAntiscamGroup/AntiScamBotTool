@@ -12,7 +12,7 @@
   "devDependencies": {
     "@types/node": "^24.13.3",
     "slash-create": "^7.0.0",
-    "wrangler": "^4.122.0"
+    "wrangler": "^4.124.0"
   },
   "dependencies": {
     "just-is-empty": "^3.4.1",
