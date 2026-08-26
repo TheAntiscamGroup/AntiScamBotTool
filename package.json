@@ -12,7 +12,7 @@
   "devDependencies": {
     "@types/node": "^24.13.3",
     "slash-create": "^7.0.0",
-    "wrangler": "^4.125.0"
+    "wrangler": "^4.126.0"
   },
   "dependencies": {
     "just-is-empty": "^3.4.1",
@@ -29,9 +29,9 @@
   },
   "optionalDependencies": {
     "@eslint/js": "^10.0.1",
-    "eslint": "^10.8.1",
+    "eslint": "^10.9.1",
     "globals": "^17.11.0",
     "jiti": "^2.7.0",
-    "typescript-eslint": "^8.67.0"
+    "typescript-eslint": "^8.68.0"
   }
 }
