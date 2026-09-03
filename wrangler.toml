@@ -38,7 +38,6 @@ mode = "smart"
 # Comment this out if you don't have a tail logger
 [[tail_consumers]]
 service = "taillogger"
-remote = false
 
 [triggers]
 crons = ["0 3 * * 2"]
