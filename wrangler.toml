@@ -26,10 +26,7 @@ kv_namespaces = [
 [observability]
 [observability.logs]
 enabled = true
-head_sampling_rate = 1
-[observability.traces]
-enabled = true
-head_sampling_rate = 0.5
+head_sampling_rate = 0.75
 
 # flags required to run wrangler in linux
 [dev]
@@ -37,6 +34,11 @@ ip = "127.0.0.1"
 
 [placement]
 mode = "smart"
+
+# Comment this out if you don't have a tail logger
+[[tail_consumers]]
+service = "taillogger"
+remote = false
 
 [triggers]
 crons = ["0 3 * * 2"]
