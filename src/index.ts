@@ -50,8 +50,15 @@ export default {
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!creator)
       makeCreator(env);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-    return cfServer.fetch(request, env, ctx);
+
+    // capture any exceptions that are thrown,
+    try {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+      return await cfServer.fetch(request, env, ctx);
+    } catch(ex) {
+      console.error(`got exception from slash-create ${ex}`);
+    }
+    return new Response(null, {status: 400});
   },
   // handling cleanup operations
   async scheduled(_controller: ScheduledController, env: Env, ctx: ExecutionContext) {
