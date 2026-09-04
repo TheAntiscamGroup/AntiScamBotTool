@@ -55,8 +55,9 @@ export default {
     try {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-return
       return await cfServer.fetch(request, env, ctx);
-    } catch(ex) {
-      console.error(`got exception from slash-create ${ex}`);
+    } catch(_ex) {
+      // don't comment these, some fucker with an AWS credit is trying to be a fuckface
+      //console.error(`got exception from slash-create ${ex}`);
     }
     return new Response(null, {status: 400});
   },
