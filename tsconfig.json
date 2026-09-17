@@ -18,8 +18,5 @@
     "./src/*.ts",
     "./src/**/*.ts"
   ],
-  "types": [
-    "./src/types/*"
-  ],
   "exclude": ["node_modules/", "dist/"]
 }

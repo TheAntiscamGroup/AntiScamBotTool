@@ -4,12 +4,13 @@ import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  { files: ["**/*.{js,mjs,cjs,ts,mts,cts}"], plugins: { js },
-    extends: ["js/recommended"], languageOptions: { globals: globals.node } },
-  globalIgnores(["src/types/wrangler.d.ts", "*.config.{js,ts}"]),
-  tseslint.configs.strictTypeChecked,
+  globalIgnores(["*.config.{js,ts}", ".wrangler/**"]),
   {
+    files: ["**/*.{js,mjs,cjs,ts}"],
+    plugins: { js },
+    extends: ["js/recommended", tseslint.configs.strictTypeChecked],
     languageOptions: {
+      globals: globals.node,
       parserOptions: {
         projectService: true,
       },
