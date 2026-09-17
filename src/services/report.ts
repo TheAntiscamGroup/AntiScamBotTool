@@ -125,7 +125,7 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
       thumbnail: {
         url: APP_EMBED_THUMBNAIL
       },
-      color: reportResp.success ? EmbedColors.green : EmbedColors.red,
+      color: reportResp.success ? EmbedColors.green : EmbedColors.orange,
       title: "Report",
       fields: [
         {

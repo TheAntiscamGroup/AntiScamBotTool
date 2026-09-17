@@ -22,6 +22,8 @@ export const EmbedColors = {
   red: 15409961,
   /* user not banned or success */
   green: 5761827,
+  /* warning embed */
+  orange: 15298849,
   /* default app color */
   default: 2303786
 };
