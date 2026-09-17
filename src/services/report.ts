@@ -111,11 +111,10 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
 
   const reportResponseData: ReportResponseMsgOptions = {
     isBanned: banStatus,
-    threadLink: reportResp.threadLink,
     firstReport: firstReport
   };
 
-  // If this is a first time report, then we show this embed.
+  // If this is a first time report, attach the report embed.
   if (firstReport) {
     // Create the embed anyways
     message.embeds = [{
@@ -145,7 +144,10 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
         }
       ]
     }];
-  } else if (!reportResp.success) {
+  }
+
+  // write the content message for the response
+  if (!reportResp.success) {
     if (reportResp.status === 400) {
       // Remove the channel source from the KV as an error has occurred.
       // 400 usually means bad request but it's extremely unlikely that we'll hit that because every tool
@@ -154,19 +156,15 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
         await env.REPORT_THREAD_CHAIN.delete(channelSourceID);
 
       message.content = "Post thread could no longer be found, please resubmit again shortly."
-    } else if (reportResp.status === 401) {
-      // Too long of a post
-      message.content = "Post was too long to forward properly";
-    } else if (reportResp.status === 0) {
-      // RPC did not respond
-      message.content = `Discord API did not respond. If this occurs again, please [open a support ticket](${env.SUPPORT_THREAD})`;
-    } else {
-      // General error
-      message.content = "Could not post to the thread, an error occurred. Please try again.";
-    }
-  }
+    } else if (reportResp.status === 401) // Too long of a post
+        message.content = "Post was too long to forward properly";
+      else if (reportResp.status === 0) // RPC did not respond
+        message.content = `Discord API did not respond. If this occurs again, please [open a support ticket](${env.SUPPORT_THREAD})`;
+      else // General error
+        message.content = "Could not post to the thread, an error occurred. Please try again.";
 
-  if (reportResp.success && hadMessage) {
+  } else if (hadMessage) {
+    reportResponseData.threadLink = reportResp.threadLink;
     message.content = writeReportResponseMsg(reportResponseData);
 
     // How long we will listen to incoming reports and redirect them (this is in seconds)
