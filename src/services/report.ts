@@ -42,7 +42,7 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
 
     // have a little safety from potential mistakes
     if (report.reportedID == curUser) {
-      message.content = "You cannot report on yourself";
+      message.content = "You cannot send a report on yourself";
       return message;
     }
 
