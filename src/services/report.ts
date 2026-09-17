@@ -192,7 +192,7 @@ function writeReportResponseMsg(options: ReportResponseMsgOptions): string {
   }
 
   responseStr += (options.firstReport) ? "Report created!" : "Message forwarded!";
-  const reportLink = (options.threadLink === undefined) ? `[the report thread](${options.threadLink})` : "the report thread";
+  const reportLink = (options.threadLink !== undefined) ? `[the report thread](${options.threadLink})` : "the report thread";
   responseStr += ` You can use this command to forward additional messages to ${reportLink}`;
   if (options.expireTime) {
     responseStr += ` until ${HelperUtils.GetTimestamp(options.expireTime)}`;
