@@ -6,7 +6,8 @@ import * as HelperUtils from "../utils";
 
 export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overrideReport: ReportObject|null=null) {
   const env: Env = ctx.serverContext;
-  const usesUserThread: boolean = config.REPORT_SETTINGS.thread_by_user;
+  // if we should thread users based on the reported user id
+  const threadsByUser: boolean = config.REPORT_SETTINGS.thread_by_user;
   const message: MessageOptions = {
     ephemeral: true
   };
@@ -87,53 +88,35 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
   }
 
   const channelSourceID: string = ctx.channel.id;
-  const lookupKey: string = (usesUserThread) ? report.reportedID : channelSourceID;
-  const prevThreadID = await env.REPORT_THREAD_CHAIN.get(lookupKey) || "";
+  const lookupKey: string = (threadsByUser) ? report.reportedID : channelSourceID;
+  const prevThreadID = (await env.REPORT_THREAD_CHAIN.get(lookupKey)) || "";
   const firstReport: boolean = isEmpty(prevThreadID);
 
   // If the id can no longer be found in the database and the user is banned, then exit out.
   // This can only happen if report_banned is true
   if (firstReport && banStatus) {
-    message.content = `It is too late to add additional messages to the report`;
+    message.content = `**NOTICE**: User has already been banned.`;
     return message;
   }
 
-  let response: ReportResponse;
-  let reportSuccess: boolean;
+  let reportResp: ReportResponse;
   try {
     const reporter: ReportAccountService = (env.REPORT as ReportAccountService);
-    response = (firstReport) ? await reporter.post(report, true) : await reporter.postFollowup(report, prevThreadID);
-    reportSuccess = response.success;
-  } catch(err) {
+    reportResp = (firstReport) ? await reporter.post(report, true) : await reporter.postFollowup(report, prevThreadID);
+  } catch (err: unknown) {
     console.error(`Encountered error ${String(err)} on report ${report.reportedID}, was first ${firstReport}`);
     message.content = "Unable to process this action, an error has occurred. Try again later.";
     return message;
   }
 
-  // How long we will listen to incoming reports and redirect them (this is in seconds)
-  const chainTTL: number = HelperUtils.GetChainTTLTime();
-
-  // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
-  if (hadMessage && reportSuccess) {
-    try {
-      const options: KVNamespacePutOptions = {
-        expirationTtl: (!usesUserThread) ? chainTTL : undefined
-      };
-      await env.REPORT_THREAD_CHAIN.put(lookupKey, response.threadID, options);
-    } catch(err) {
-      console.error(`Encountered an error trying to update thread KV ${err}`);
-    }
-  }
+  const reportResponseData: ReportResponseMsgOptions = {
+    isBanned: banStatus,
+    threadLink: reportResp.threadLink,
+    firstReport: firstReport
+  };
 
   // If this is a first time report, then we show this embed.
   if (firstReport) {
-    // If they forwarded a message, then we can tell them they can report more
-    if (hadMessage && reportSuccess) {
-      message.content = `You can add even more messages to this report by using the integration again. Messages will be bundled together for you`;
-      if (!usesUserThread)
-        message.content += ` until ${HelperUtils.GetTimestamp(chainTTL)}\n`;
-    }
-
     // Create the embed anyways
     message.embeds = [{
       author: {
@@ -142,7 +125,7 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
       thumbnail: {
         url: APP_EMBED_THUMBNAIL
       },
-      color: !reportSuccess ? EmbedColors.red : EmbedColors.green,
+      color: reportResp.success ? EmbedColors.green : EmbedColors.red,
       title: "Report",
       fields: [
         {
@@ -157,42 +140,64 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
         },
         {
           name: "Report Status",
-          value: reportSuccess ? response.threadLink : `Failed to report`,
+          value: reportResp.success ? reportResp.threadLink : `Failed to report`,
           inline: true
         }
       ]
     }];
-  } else if (hadMessage) {
-    if (!reportSuccess) {
-      console.warn(`Got error when follow up reporting ${response.status}`);
-      if (response.status === 400) {
-        // Remove the channel source from the KV as an error has occurred.
-        // 400 usually means bad request but it's extremely unlikely that we'll hit that because every tool
-        // has validated all of it's potential data. So delete the thread KV info instead.
-        if (!usesUserThread)
-          await env.REPORT_THREAD_CHAIN.delete(channelSourceID);
+  } else if (!reportResp.success) {
+    if (reportResp.status === 400) {
+      // Remove the channel source from the KV as an error has occurred.
+      // 400 usually means bad request but it's extremely unlikely that we'll hit that because every tool
+      // has validated all of it's potential data. So delete the thread KV info instead.
+      if (!threadsByUser)
+        await env.REPORT_THREAD_CHAIN.delete(channelSourceID);
 
-        message.content = "Post thread could no longer be found, please resubmit again shortly."
-      } else if (response.status === 401) {
-        // Too long of a post
-        message.content = "Post was too long to forward properly";
-      } else if (response.status === 0) {
-        // RPC did not respond
-        message.content = `Discord API did not respond. If this occurs again, please [open a support ticket](${env.SUPPORT_THREAD})`;
-      } else {
-        // General error
-        message.content = "Could not post to the thread, an error occurred. Please try again.";
-      }
+      message.content = "Post thread could no longer be found, please resubmit again shortly."
+    } else if (reportResp.status === 401) {
+      // Too long of a post
+      message.content = "Post was too long to forward properly";
+    } else if (reportResp.status === 0) {
+      // RPC did not respond
+      message.content = `Discord API did not respond. If this occurs again, please [open a support ticket](${env.SUPPORT_THREAD})`;
     } else {
-      const threadLink: string = `[the report thread](${response.threadLink})`;
-      if (usesUserThread) {
-        message.content = `Message added to ${threadLink}.\nContinuing to use this command on other messages will forward them to the same thread automatically.`;
-      } else {
-        message.content = `Message forwarded, expiry updated.\nUsing this command on other messages will update ${threadLink} automatically.\n
-        This report can take more submissions until ${HelperUtils.GetTimestamp(chainTTL)}.`;
-      }
+      // General error
+      message.content = "Could not post to the thread, an error occurred. Please try again.";
     }
+  }
+
+  if (reportResp.success && hadMessage) {
+    message.content = writeReportResponseMsg(reportResponseData);
+
+    // How long we will listen to incoming reports and redirect them (this is in seconds)
+    const chainTTL: number = HelperUtils.GetChainTTLTime();
+    let kvPutOptions: KVNamespacePutOptions|undefined;
+    // if we do not group by user reported, then set up the appropriate options
+    if (!threadsByUser) {
+      reportResponseData.expireTime = chainTTL;
+      kvPutOptions = {
+        expirationTtl: chainTTL
+      };
+    }
+    // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
+    await env.REPORT_THREAD_CHAIN.put(lookupKey, reportResp.threadID, kvPutOptions);
   }
 
   return message;
 };
+
+function writeReportResponseMsg(options: ReportResponseMsgOptions): string {
+  let responseStr: string = "";
+
+  if (options.isBanned) {
+    responseStr += "**NOTICE**: User is already banned\n";
+  }
+
+  responseStr += (options.firstReport) ? "Report created!" : "Message forwarded!";
+  const reportLink = (options.threadLink === undefined) ? `[the report thread](${options.threadLink})` : "the report thread";
+  responseStr += ` You can use this command to forward additional messages to the ${reportLink}`;
+  if (options.expireTime) {
+    responseStr += ` until ${HelperUtils.GetTimestamp(options.expireTime)}`;
+  }
+  return responseStr;
+}

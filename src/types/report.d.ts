@@ -19,6 +19,13 @@ declare interface ReportResponse {
   success: boolean;
 };
 
+declare interface ReportResponseMsgOptions {
+  expireTime?: number;
+  isBanned: boolean;
+  threadLink?: string;
+  firstReport: boolean;
+}
+
 declare type ReportAccount = (report: ReportObject, waitForThread: boolean) => Promise<ReportResponse>;
 declare type ReportAccountFollowup = (report: ReportObject, previousThread: string) => Promise<ReportResponse>;
 

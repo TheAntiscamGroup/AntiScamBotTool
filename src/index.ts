@@ -57,7 +57,6 @@ export default {
       return await cfServer.fetch(request, env, ctx);
     } catch(_ex) {
       // don't comment these, some fucker with an AWS credit is trying to be a fuckface
-      //console.error(`got exception from slash-create ${ex}`);
     }
     return new Response(null, {status: 400});
   },
