@@ -77,7 +77,7 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
   if (apiResponse.valid) {
     banStatus = apiResponse.banned;
   } else {
-    message.content = `${APP_NAME} encountered an error while deferring user id, please try again`;
+    message.content = `${APP_NAME} encountered an error while looking up target data, please try again`;
     return message;
   }
 
