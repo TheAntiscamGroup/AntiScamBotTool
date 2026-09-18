@@ -109,7 +109,7 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
     return message;
   }
 
-  const reportResponseData: ReportResponseMsgOptions = {
+  const msgResponse: ReportResponseMsgOptions = {
     isBanned: banStatus,
     firstReport: firstReport
   };
@@ -164,38 +164,31 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
         message.content = "Could not post to the thread, an error occurred. Please try again.";
 
   } else if (hadMessage) {
-    reportResponseData.threadLink = reportResp.threadLink;
-    message.content = writeReportResponseMsg(reportResponseData);
+    msgResponse.threadLink = reportResp.threadLink;
 
     // How long we will listen to incoming reports and redirect them (this is in seconds)
     const chainTTL: number = HelperUtils.GetChainTTLTime();
     let kvPutOptions: KVNamespacePutOptions|undefined;
     // if we do not group by user reported, then set up the appropriate options
     if (!threadsByUser) {
-      reportResponseData.expireTime = chainTTL;
+      msgResponse.expireTime = chainTTL;
       kvPutOptions = {
         expirationTtl: chainTTL
       };
     }
     // add to KV, make it die at TTL time, this count refreshes per submission via the message app tool
     await env.REPORT_THREAD_CHAIN.put(lookupKey, reportResp.threadID, kvPutOptions);
+    message.content = writeReportResponseMsg(msgResponse);
   }
 
   return message;
 };
 
 function writeReportResponseMsg(options: ReportResponseMsgOptions): string {
-  let responseStr: string = "";
-
-  if (options.isBanned) {
-    responseStr += "**NOTICE**: User is already banned\n";
-  }
-
+  let responseStr: string = (options.isBanned) ? "**NOTICE**: User is already banned\n" : "";
   responseStr += (options.firstReport) ? "Report created!" : "Message forwarded!";
   const reportLink = (options.threadLink !== undefined) ? `[the report thread](${options.threadLink})` : "the report thread";
   responseStr += ` You can use this command to forward additional messages to ${reportLink}`;
-  if (options.expireTime) {
-    responseStr += ` until ${HelperUtils.GetTimestamp(options.expireTime)}`;
-  }
+  responseStr += (options.expireTime) ? ` until ${HelperUtils.GetTimestamp(options.expireTime)}.` : ".";
   return responseStr;
 }
