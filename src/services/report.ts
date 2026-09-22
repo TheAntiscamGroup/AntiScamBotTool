@@ -68,6 +68,11 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
         //console.log(`Found file: ${el.url} and proxy ${el.proxy_url}`);
         report.evidence?.push(el.url);
       });
+
+      // remove the evidence field if there's no evidence that we can use
+      if (report.evidence.length == 0) {
+        delete report.evidence;
+      }
     }
   }
 
