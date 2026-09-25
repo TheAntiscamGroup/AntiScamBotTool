@@ -1,6 +1,7 @@
 import isEmpty from 'just-is-empty';
 import parse from 'parse-duration';
 import { config } from './config';
+import { AccountCheckFlag } from './enums';
 
 export function GetTimestamp(offsetTime: number=0): string {
   const date: Date = new Date();
@@ -34,6 +35,16 @@ export function GetChainTTLTime(): number {
   return TTLTime;
 }
 
+export function CheckAccountInput(account: string|null): AccountCheckFlag {
+  if (!IsAccountValid(account))
+    return AccountCheckFlag.Invalid;
+
+  if (IsAccountProtected(account))
+    return AccountCheckFlag.Protected;
+
+  return AccountCheckFlag.Ok;
+}
+
 // prevent accounts from being used/reported (mostly just other ScamGuard bots)
 export function IsAccountProtected(account: string|null): boolean {
   if (account == null)
@@ -50,9 +61,6 @@ export function IsAccountProtected(account: string|null): boolean {
 
 export function IsAccountValid(account: string|null): boolean {
   if (account == null || account.length < 17 || account.length > 20)
-    return false;
-
-  if (IsAccountProtected(account))
     return false;
 
   // check if it's all numbers

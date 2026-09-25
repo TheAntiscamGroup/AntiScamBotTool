@@ -2,6 +2,7 @@ import isEmpty from "just-is-empty";
 import type { CommandContext, EmbedField, MessageOptions } from "slash-create/web";
 import { config } from "../config";
 import { APP_EMBED_THUMBNAIL, APP_NAME, EmbedColors } from "../consts";
+import { AccountCheckFlag } from "../enums";
 import * as HelperUtils from "../utils";
 
 export async function ScamGuardLookup(ctx: CommandContext<Cloudflare.Env>, lookupUser: string) {
@@ -12,8 +13,11 @@ export async function ScamGuardLookup(ctx: CommandContext<Cloudflare.Env>, looku
   };
 
   // check if the given input is a correct number
-  if (!HelperUtils.IsAccountValid(lookupUser)) {
-    console.error(`${curUser} sent an input of ${lookupUser} which is invalid`);
+  const inputStatus = HelperUtils.CheckAccountInput(lookupUser);
+  if (inputStatus != AccountCheckFlag.Ok) {
+    // report on any accounts that are not protected
+    if (inputStatus != AccountCheckFlag.Protected)
+      console.warn(`${curUser} sent an input of ${lookupUser} which is invalid`);
     message.content = "The given input is not a valid Discord account";
     return message;
   }

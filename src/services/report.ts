@@ -47,7 +47,7 @@ export async function ScamGuardReport(ctx: CommandContext<Cloudflare.Env>, overr
     }
 
     // check if the given input is a correct number
-    if (!HelperUtils.IsAccountValid(report.reportedID)) {
+    if (!HelperUtils.IsAccountValid(report.reportedID) || HelperUtils.IsAccountProtected(report.reportedID)) {
       message.content = "This account cannot be reported";
       return message;
     }

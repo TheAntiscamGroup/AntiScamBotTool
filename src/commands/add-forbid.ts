@@ -53,6 +53,11 @@ export default class ForbidAccessHelperCommand extends SlashCommand {
       return message;
     }
 
+    if (HelperUtils.IsAccountProtected(targetUser)) {
+      message.content = "You cannot report this account";
+      return message;
+    }
+
     // Technically shouldn't be necessary but we'll do it anyways
     if (ctx.guildID !== config.CONTROL_GUILD && !isEmpty(config.CONTROL_GUILD)) {
       message.content = "This command is not allowed outside of the control guild";
