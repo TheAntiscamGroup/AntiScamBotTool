@@ -12,7 +12,7 @@
   "devDependencies": {
     "@types/node": "^24.13.3",
     "slash-create": "^7.0.0",
-    "wrangler": "^4.148.0"
+    "wrangler": "^4.149.0"
   },
   "dependencies": {
     "just-is-empty": "^3.4.1",
@@ -25,9 +25,6 @@
     },
     "@actions/http-client": {
       "undici": "^7.29.1"
-    },
-    "miniflare": {
-      "sharp": "0.35.5"
     }
   },
   "optionalDependencies": {
