@@ -39,6 +39,10 @@ mode = "smart"
 [[tail_consumers]]
 service = "taillogger"
 
+[assets]
+directory = "./assets/"
+run_worker_first = false
+
 [triggers]
 crons = ["0 3 * * 2"]
 

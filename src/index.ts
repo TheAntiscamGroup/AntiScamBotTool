@@ -41,8 +41,13 @@ export default {
         return Response.json(await CleanThreadChain(env, ctx));
       }
       // otherwise redirect to the install URL
-      if (config.APP_SETTINGS.redirect_to_install) {
-        return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
+      if (requestLoc.pathname === "/install" || config.APP_SETTINGS.redirect_to_install) {
+        const userAgentHeader = request.headers.get("User-Agent");
+        if (userAgentHeader?.includes("Discordbot")) {
+          return Response.redirect(requestLoc.hostname + "/embed.html");
+        } else {
+          return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
+        }
       }
     }
 
