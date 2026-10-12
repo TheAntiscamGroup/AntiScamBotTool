@@ -8,6 +8,9 @@ export const config: Settings = {
     redirect_to_install: true,
     // if the /clean endpoint is exposed (allows for force cleaning of KV entries)
     can_use_clean: false,
+    // if we should show a custom embed module if someone posts the link to the tool
+    // this requires manual editing of the embed.html file in the assets folder
+    custom_discord_embed: true,
     // other discord accounts ids that are related to this app, this app cannot be used on these accounts/webhooks
     accounts: ["1152057650226401320", "1176299970568147057", "1226254289161158776", "1443130827662823557", "1285010284897112154"]
   },

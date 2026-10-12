@@ -40,14 +40,16 @@ export default {
       if (config.APP_SETTINGS.can_use_clean && requestLoc.pathname === "/clean") {
         return Response.json(await CleanThreadChain(env, ctx));
       }
+
+      // if we use custom embeds, serve up the embed file to the discord user
+      const userAgentHeader = request.headers.get("User-Agent");
+      if (config.APP_SETTINGS.custom_discord_embed && userAgentHeader?.includes("Discordbot")) {
+        return Response.redirect(requestLoc.origin + "/embed");
+      }
+
       // otherwise redirect to the install URL
       if (requestLoc.pathname === "/install" || config.APP_SETTINGS.redirect_to_install) {
-        const userAgentHeader = request.headers.get("User-Agent");
-        if (userAgentHeader?.includes("Discordbot")) {
-          return Response.redirect(requestLoc.origin + "/embed");
-        } else {
-          return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
-        }
+        return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
       }
     }
 

@@ -9,6 +9,7 @@ declare interface Settings {
 declare interface ApplicationSettings {
   redirect_to_install: boolean;
   can_use_clean: boolean;
+  custom_discord_embed: boolean;
   accounts?: string[];
 };
 
