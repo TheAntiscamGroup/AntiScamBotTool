@@ -44,7 +44,7 @@ export default {
       if (requestLoc.pathname === "/install" || config.APP_SETTINGS.redirect_to_install) {
         const userAgentHeader = request.headers.get("User-Agent");
         if (userAgentHeader?.includes("Discordbot")) {
-          return Response.redirect(requestLoc.hostname + "/embed.html");
+          return Response.redirect(requestLoc.hostname + "/embed");
         } else {
           return Response.redirect(`https://discord.com/oauth2/authorize?client_id=${env.DISCORD_APP_ID}`);
         }
