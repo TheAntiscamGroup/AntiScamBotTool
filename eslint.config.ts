@@ -4,7 +4,7 @@ import tseslint from "typescript-eslint";
 import { defineConfig, globalIgnores } from "eslint/config";
 
 export default defineConfig([
-  globalIgnores(["*.config.{js,ts}", ".wrangler/**"]),
+  globalIgnores(["*.config.{js,ts}", ".wrangler/**", "src/@types/wrangler.d.ts"]),
   {
     files: ["**/*.{js,mjs,cjs,ts}"],
     plugins: { js },
