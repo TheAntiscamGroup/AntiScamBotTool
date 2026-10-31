@@ -17,7 +17,7 @@
   "dependencies": {
     "just-is-empty": "^3.4.1",
     "just-unique": "^4.2.0",
-    "parse-duration": "^2.1.9"
+    "parse-duration": "^2.1.11"
   },
   "overrides": {
     "@actions/github": {
@@ -28,11 +28,14 @@
     },
     "miniflare": {
       "undici": "^7.30.1"
+    },
+    "slash-create": {
+      "undici": "^6.29.1"
     }
   },
   "optionalDependencies": {
     "@eslint/js": "^10.0.1",
-    "eslint": "^10.13.0",
+    "eslint": "^10.14.0",
     "globals": "^17.13.0",
     "jiti": "^2.7.0",
     "typescript-eslint": "^8.72.1"
